@@ -1,26 +1,44 @@
-import { LockKeyhole, Sparkles } from "@/components/ui/icons";
-import { loginAction } from "./actions";
+import { Activity, ArrowUpRight, CircleCheck, Sparkles } from "@/components/ui/icons";
+import { LoginForm } from "./login-form";
 
 export const metadata = { title: "Sign in · Personna" };
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const { error } = await searchParams;
-  return (
-    <main className="grain relative grid min-h-screen place-items-center overflow-hidden px-5 py-12">
-      <div className="pointer-events-none absolute -top-44 left-1/2 size-[420px] -translate-x-1/2 rounded-full opacity-30 blur-3xl" style={{ background: "var(--grad-glow)" }} />
-      <section className="relative w-full max-w-[410px] rounded-[24px] border border-[var(--border)] bg-[var(--surface-1)] p-7 shadow-2xl sm:p-9">
-        <div className="mb-9 flex items-center gap-3"><span className="grid size-10 place-items-center rounded-xl bg-[var(--surface-2)] text-[var(--strawberry)]"><Sparkles size={18} /></span><span className="font-display text-lg font-semibold">personna<span className="text-[var(--strawberry)]">.</span></span></div>
-        <span className="mb-5 grid size-10 place-items-center rounded-xl bg-[var(--surface-2)] text-[var(--grauzone)]"><LockKeyhole size={17} /></span>
-        <h1 className="font-display text-2xl font-medium">Welcome back</h1>
-        <p className="mt-2 text-sm text-[var(--grauzone)]">Sign in to your private workspace.</p>
-        <form action={loginAction} className="mt-7 space-y-4">
-          <label className="block text-xs text-[var(--grauzone)]">Email<input required autoComplete="username" type="email" name="email" className="mt-2 h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--ink)] px-3 text-sm text-[var(--tan)] outline-none transition focus:border-[var(--strawberry)]" /></label>
-          <label className="block text-xs text-[var(--grauzone)]">Password<input required autoComplete="current-password" type="password" name="password" className="mt-2 h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--ink)] px-3 text-sm text-[var(--tan)] outline-none transition focus:border-[var(--strawberry)]" /></label>
-          {error === "invalid" && <p role="alert" className="text-xs text-[var(--danger)]">Email or password is incorrect, or sign-in is temporarily limited.</p>}
-          <button type="submit" className="mt-2 h-11 w-full rounded-xl bg-[var(--strawberry)] text-sm font-semibold text-[var(--ink)] transition hover:shadow-[0_0_24px_#FF5C8D55]">Sign in</button>
-        </form>
-        <p className="mt-6 text-center text-[10px] text-[var(--grauzone)]">One system. Every responsibility. Meaningful progress.</p>
+  return <main className="login-shell grain relative isolate min-h-screen overflow-hidden">
+    <div aria-hidden="true" className="pointer-events-none absolute -left-44 top-[20%] size-[480px] rounded-full bg-[var(--strawberry)]/10 blur-[120px]"/>
+    <div className="mx-auto grid min-h-screen w-full max-w-[1600px] md:grid-cols-[minmax(390px,.88fr)_minmax(0,1.12fr)]">
+      <section className="relative z-10 flex min-h-screen flex-col justify-between px-6 py-8 sm:px-12 lg:px-16 xl:px-24">
+        <a href="/login" aria-label="Personna sign in" className="inline-flex w-fit items-center gap-3 text-[var(--tan)]"><span className="grid size-10 place-items-center rounded-lg bg-[linear-gradient(145deg,#FF5C8D,#9B3AA6_65%,#5141A8)] text-white shadow-[0_8px_30px_#FF5C8D38]"><Sparkles size={18}/></span><span className="text-xl font-extrabold tracking-[-.04em]">personna<span className="text-[var(--strawberry)]">.</span></span></a>
+        <div className="mx-auto w-full max-w-[420px] py-14 md:py-20">
+          <div className="mb-7 inline-flex items-center gap-2 rounded-full bg-white/[.045] px-3 py-1.5 text-[11px] font-bold tracking-wide text-[#D7B7F4]"><span className="size-1.5 rounded-full bg-[var(--strawberry)] shadow-[0_0_10px_var(--strawberry)]"/> YOUR PERSONAL OPERATING SYSTEM</div>
+          <h1 className="max-w-[10ch] text-[42px] font-extrabold leading-[1.03] tracking-[-.06em] text-white sm:text-[52px]">Welcome back<span className="text-transparent bg-clip-text bg-[linear-gradient(100deg,#FF84AE,#C77DF2_65%,#82A5FF)]">.</span></h1>
+          <p className="mt-4 max-w-sm text-[15px] leading-7 text-[color-mix(in_srgb,var(--tan),transparent_24%)]">A little clarity goes a long way. Sign in to pick up where you left off.</p>
+          <LoginForm error={error}/>
+          <div className="mt-6 flex items-center justify-center gap-2 text-xs font-medium text-[color-mix(in_srgb,var(--tan),transparent_36%)]"><CircleCheck size={14} className="text-[var(--success)]"/> Your workspace stays private and secure</div>
+        </div>
+        <p className="text-xs font-medium text-[color-mix(in_srgb,var(--tan),transparent_48%)]">One system. Every responsibility. Meaningful progress.</p>
       </section>
-    </main>
-  );
+
+      <aside aria-label="Personna dashboard illustration" className="login-art relative hidden min-h-screen overflow-hidden md:flex md:items-center md:justify-center">
+        <div aria-hidden="true" className="absolute inset-0 opacity-[.16]" style={{ backgroundImage: "linear-gradient(color-mix(in srgb,var(--grauzone),transparent 80%) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--grauzone),transparent 80%) 1px,transparent 1px)", backgroundSize: "52px 52px", maskImage: "radial-gradient(ellipse at center,black,transparent 72%)" }}/>
+        <div aria-hidden="true" className="absolute right-[-8rem] top-[-10rem] size-[520px] rounded-full bg-[var(--eggplant)]/30 blur-[110px]"/>
+        <div aria-hidden="true" className="absolute bottom-[-11rem] left-[-4rem] size-[500px] rounded-full bg-[var(--strawberry)]/10 blur-[110px]"/>
+        <div className="relative w-full max-w-[740px] px-8 py-16 xl:px-14">
+          <div className="relative mx-auto aspect-square w-full max-w-[590px]">
+            <svg viewBox="0 0 600 600" fill="none" className="absolute inset-0 size-full" aria-hidden="true">
+              <defs><linearGradient id="orbital" x1="90" y1="80" x2="500" y2="520" gradientUnits="userSpaceOnUse"><stop stopColor="#FF84AE"/><stop offset=".48" stopColor="#A56BFF"/><stop offset="1" stopColor="#5EC9FF"/></linearGradient><radialGradient id="core" cx="0" cy="0" r="1" gradientTransform="matrix(0 150 -150 0 300 292)" gradientUnits="userSpaceOnUse"><stop stopColor="#FF9AC1" stopOpacity=".48"/><stop offset=".55" stopColor="#A84FE4" stopOpacity=".18"/><stop offset="1" stopColor="#1E3442" stopOpacity="0"/></radialGradient><filter id="blur"><feGaussianBlur stdDeviation="20"/></filter></defs>
+              <circle cx="300" cy="292" r="203" fill="url(#core)"/><circle cx="300" cy="292" r="174" stroke="url(#orbital)" strokeOpacity=".22"/><circle cx="300" cy="292" r="130" stroke="url(#orbital)" strokeOpacity=".42" strokeDasharray="3 8"/><ellipse cx="300" cy="292" rx="202" ry="78" transform="rotate(-32 300 292)" stroke="url(#orbital)" strokeOpacity=".62"/><ellipse cx="300" cy="292" rx="202" ry="78" transform="rotate(45 300 292)" stroke="url(#orbital)" strokeOpacity=".32"/>
+              <circle cx="300" cy="292" r="79" fill="url(#orbital)" fillOpacity=".13"/><circle cx="300" cy="292" r="59" fill="#1E3442" stroke="url(#orbital)" strokeOpacity=".75"/><path d="M278 294.5 293 309l31-34" stroke="#FFB3CF" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"/><circle cx="144" cy="199" r="5" fill="#FF84AE"/><circle cx="457" cy="384" r="5" fill="#86CCFF"/><circle cx="370" cy="102" r="4" fill="#C78DFF"/><circle cx="194" cy="453" r="4" fill="#FF84AE"/>
+              <circle cx="300" cy="292" r="176" stroke="#FFF" strokeOpacity=".035"/>
+            </svg>
+            <div className="absolute left-[2%] top-[21%] rounded-xl bg-[#223647]/85 p-4 shadow-[0_18px_60px_#080D1B66] backdrop-blur-xl sm:left-0"><div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.16em] text-[var(--muted)]"><Activity size={13} className="text-[#FF84AE]"/> Daily momentum</div><p className="mt-3 text-2xl font-extrabold tracking-tight text-white">One step at a time</p><div className="mt-3 flex gap-1.5">{[34, 48, 40, 68, 57, 82, 100].map((height, i) => <span key={i} className="w-5 rounded-sm bg-[linear-gradient(180deg,#FF84AE,#765BE9)] opacity-90" style={{ height: `${height * .28}px` }}/>)}</div></div>
+            <div className="absolute right-[1%] top-[17%] flex items-center gap-3 rounded-xl bg-[#263748]/90 px-4 py-3 shadow-[0_18px_60px_#080D1B66] backdrop-blur-xl sm:right-0"><span className="grid size-9 place-items-center rounded-lg bg-[linear-gradient(145deg,#FF6C9A,#9A4BD2)]"><CircleCheck size={17} className="text-white"/></span><div><p className="text-xs font-bold text-white">Focus, without the noise</p><p className="mt-1 text-[10px] font-medium text-[var(--muted)]">Your day in one clear view</p></div></div>
+            <div className="absolute bottom-[15%] left-[9%] rounded-xl bg-[#202F40]/90 px-4 py-3 shadow-[0_18px_60px_#080D1B66] backdrop-blur-xl"><p className="text-[10px] font-bold uppercase tracking-[.16em] text-[var(--muted)]">Make room for</p><p className="mt-1 text-sm font-extrabold text-white">What matters next <ArrowUpRight size={13} className="ml-1 inline text-[#C99BFF]"/></p></div>
+          </div>
+          <div className="relative mx-auto mt-[-1rem] max-w-[480px] text-center"><p className="text-2xl font-extrabold tracking-[-.04em] text-white xl:text-3xl">See your whole life, <span className="text-transparent bg-clip-text bg-[linear-gradient(100deg,#FF84AE,#C77DF2,#82A5FF)]">moving forward.</span></p><p className="mx-auto mt-3 max-w-md text-sm leading-6 text-[color-mix(in_srgb,var(--tan),transparent_38%)]">Bring your plans, projects, money, and personal growth into one thoughtful space.</p></div>
+        </div>
+      </aside>
+    </div>
+  </main>;
 }

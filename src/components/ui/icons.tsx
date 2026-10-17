@@ -4,8 +4,8 @@ import {
   faBook, faBookOpen, faBullseye, faCalendarDays, faChartLine, faCheck, faChevronDown,
   faChevronLeft, faChevronRight, faCircle, faCircleCheck, faCircleDot, faCircleExclamation, faCirclePause,
   faCirclePlay, faCircleUser, faClock, faCoins, faDatabase, faDownload, faFlag,
-  faFolderOpen, faGear, faInbox, faKeyboard, faLightbulb, faListCheck, faLock,
-  faMagnifyingGlass, faMinus, faNoteSticky, faPause, faPlay, faPlus, faRotateLeft,
+  faEye, faEyeSlash, faFolderOpen, faGear, faInbox, faKeyboard, faLightbulb, faListCheck, faLock,
+  faEnvelope, faMagnifyingGlass, faMinus, faNoteSticky, faPause, faPlay, faPlus, faRotateLeft,
   faScaleBalanced, faShieldHalved, faSliders, faStar, faStopwatch, faSun, faTag,
   faTableColumns, faTriangleExclamation, faWallet, faWandMagicSparkles,
 } from "@fortawesome/free-solid-svg-icons";
@@ -42,6 +42,9 @@ export const CircleUserRound = icon(faCircleUser);
 export const Clock3 = icon(faClock);
 export const Command = icon(faKeyboard);
 export const Database = icon(faDatabase);
+export const Eye = icon(faEye);
+export const EyeSlash = icon(faEyeSlash);
+export const Envelope = icon(faEnvelope);
 export const FileText = icon(faNoteSticky);
 export const Flag = icon(faFlag);
 export const FolderKanban = icon(faFolderOpen);
