@@ -5,10 +5,10 @@ Personna is a private, MongoDB-backed personal operating system for daily tasks,
 ## Run locally
 
 1. Install Node.js 20+ and a MongoDB Community Server or Atlas database.
-2. Copy `.env.example` to `.env.local`, set `MONGODB_URI`, `MONGODB_DB`, `AUTH_SECRET`, `SEED_EMAIL`, and `SEED_PASSWORD`. Generate the secret with `node -e "console.log(require('node:crypto').randomBytes(32).toString('base64'))"`.
+2. Copy `.env.example` to `.env.local`, set `MONGODB_URI`, `MONGODB_DB`, `AUTH_SECRET`, `SEED_EMAIL`, and `SEED_PASSWORD`. Generate the secret with `node -e "console.log(require('node:crypto').randomBytes(32).toString('base64'))"`. Set `NEXT_PUBLIC_SITE_URL` to the public origin for correct Open Graph and sitemap URLs; analytics remain off unless explicitly enabled with Plausible settings.
 3. Run `npm install`.
 4. Run `npm run db:seed` to create the initial user and repeatable sample records across tasks, projects, notes, goals, habits, learning, time, and finance. The seed preserves existing account credentials and does not overwrite existing sample records.
-5. Run `npm run dev` and sign in at <http://localhost:3000>.
+5. Run `npm run dev`, visit the public marketing page at <http://localhost:3000>, create an account with **Start free**, or sign in at `/login`. The authenticated workspace is at `/dashboard`.
 
 Useful checks: `npm run typecheck`, `npm run lint`, `npm run test`, and `npm run build`.
 

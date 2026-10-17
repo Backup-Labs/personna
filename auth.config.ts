@@ -7,9 +7,12 @@ const authConfig = {
   callbacks: {
     authorized({ auth, request }) {
       const signedIn = Boolean(auth?.user);
+      const isLandingPage = request.nextUrl.pathname === "/";
       const onLoginPage = request.nextUrl.pathname === "/login";
-      if (onLoginPage && signedIn) return Response.redirect(new URL("/", request.nextUrl));
-      return onLoginPage || signedIn;
+      const onSignupPage = request.nextUrl.pathname === "/signup";
+      const isPublicMetadata = ["/robots.txt", "/sitemap.xml"].includes(request.nextUrl.pathname) || request.nextUrl.pathname.startsWith("/opengraph-image");
+      if ((onLoginPage || onSignupPage) && signedIn) return Response.redirect(new URL("/dashboard", request.nextUrl));
+      return isLandingPage || onLoginPage || onSignupPage || isPublicMetadata || signedIn;
     },
   },
 } satisfies NextAuthConfig;

@@ -1,31 +1,34 @@
 import { Activity, ArrowUpRight, CircleCheck, Sparkles } from "@/components/ui/icons";
+import Link from "next/link";
 import { LoginForm } from "./login-form";
 
 export const metadata = { title: "Sign in · Personna" };
 
-export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
-  const { error } = await searchParams;
-  return <main className="login-shell grain relative isolate min-h-screen overflow-hidden">
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string; registered?: string }> }) {
+  const { error, registered } = await searchParams;
+  return <main className="login-shell grain relative isolate h-dvh overflow-hidden">
     <div aria-hidden="true" className="pointer-events-none absolute -left-44 top-[20%] size-[480px] rounded-full bg-[var(--strawberry)]/10 blur-[120px]"/>
-    <div className="mx-auto grid min-h-screen w-full max-w-[1600px] md:grid-cols-[minmax(390px,.88fr)_minmax(0,1.12fr)]">
-      <section className="relative z-10 flex min-h-screen flex-col justify-between px-6 py-8 sm:px-12 lg:px-16 xl:px-24">
-        <a href="/login" aria-label="Personna sign in" className="inline-flex w-fit items-center gap-3 text-[var(--tan)]"><span className="grid size-10 place-items-center rounded-lg bg-[linear-gradient(145deg,#FF5C8D,#9B3AA6_65%,#5141A8)] text-white shadow-[0_8px_30px_#FF5C8D38]"><Sparkles size={18}/></span><span className="text-xl font-extrabold tracking-[-.04em]">personna<span className="text-[var(--strawberry)]">.</span></span></a>
-        <div className="mx-auto w-full max-w-[420px] py-14 md:py-20">
-          <div className="mb-7 inline-flex items-center gap-2 rounded-full bg-white/[.045] px-3 py-1.5 text-[11px] font-bold tracking-wide text-[#D7B7F4]"><span className="size-1.5 rounded-full bg-[var(--strawberry)] shadow-[0_0_10px_var(--strawberry)]"/> YOUR PERSONAL OPERATING SYSTEM</div>
-          <h1 className="max-w-[10ch] text-[42px] font-extrabold leading-[1.03] tracking-[-.06em] text-white sm:text-[52px]">Welcome back<span className="text-transparent bg-clip-text bg-[linear-gradient(100deg,#FF84AE,#C77DF2_65%,#82A5FF)]">.</span></h1>
-          <p className="mt-4 max-w-sm text-[15px] leading-7 text-[color-mix(in_srgb,var(--tan),transparent_24%)]">A little clarity goes a long way. Sign in to pick up where you left off.</p>
+    <div className="login-layout mx-auto grid h-full w-full max-w-[1920px] lg:grid-cols-[minmax(390px,.88fr)_minmax(0,1.12fr)]">
+      <section className="login-column relative z-10 flex h-full min-h-0 flex-col justify-between px-6 py-5 sm:px-10 lg:px-8 xl:px-14">
+        <a href="/login" aria-label="Personna sign in" className="inline-flex w-fit items-center gap-3 text-[var(--tan)]"><span className="grid size-9 place-items-center rounded-lg bg-[var(--surface-2)] text-[var(--strawberry)]"><Sparkles size={17}/></span><span className="text-xl font-extrabold tracking-[-.04em]">personna<span className="text-[var(--strawberry)]">.</span></span></a>
+        <div className="login-content mx-auto w-full max-w-[420px] py-4">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/[.045] px-3 py-1.5 text-[10px] font-bold tracking-wide text-[#D7B7F4]"><span className="size-1.5 rounded-full bg-[var(--strawberry)] shadow-[0_0_10px_var(--strawberry)]"/> YOUR PERSONAL OPERATING SYSTEM</div>
+          <h1 className="max-w-[10ch] text-[38px] font-extrabold leading-[1.03] tracking-[-.06em] text-white sm:text-[44px]">Welcome back<span className="text-[var(--strawberry)]">.</span></h1>
+          <p className="login-description mt-2 max-w-sm text-sm leading-6 text-[color-mix(in_srgb,var(--tan),transparent_24%)]">A little clarity goes a long way. Sign in to pick up where you left off.</p>
+          {registered === "1" && <p role="status" className="mt-4 rounded-md bg-[color-mix(in_srgb,var(--success),transparent_90%)] px-3 py-2.5 text-sm text-[var(--success)]">Your account is ready. Sign in to continue.</p>}
           <LoginForm error={error}/>
-          <div className="mt-6 flex items-center justify-center gap-2 text-xs font-medium text-[color-mix(in_srgb,var(--tan),transparent_36%)]"><CircleCheck size={14} className="text-[var(--success)]"/> Your workspace stays private and secure</div>
+          <p className="login-signup-link mt-5 text-center text-xs text-[var(--muted)]">New to Personna? <Link href="/signup" className="font-semibold text-[var(--strawberry)] hover:underline">Create an account</Link></p>
+          <div className="login-security mt-6 flex items-center justify-center gap-2 text-xs font-medium text-[color-mix(in_srgb,var(--tan),transparent_36%)]"><CircleCheck size={14} className="text-[var(--success)]"/> Your workspace stays private and secure</div>
         </div>
         <p className="text-xs font-medium text-[color-mix(in_srgb,var(--tan),transparent_48%)]">One system. Every responsibility. Meaningful progress.</p>
       </section>
 
-      <aside aria-label="Personna dashboard illustration" className="login-art relative hidden min-h-screen overflow-hidden md:flex md:items-center md:justify-center">
+      <aside aria-label="Personna dashboard illustration" className="login-art relative hidden h-full min-h-0 overflow-hidden lg:flex lg:items-center lg:justify-center">
         <div aria-hidden="true" className="absolute inset-0 opacity-[.16]" style={{ backgroundImage: "linear-gradient(color-mix(in srgb,var(--grauzone),transparent 80%) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--grauzone),transparent 80%) 1px,transparent 1px)", backgroundSize: "52px 52px", maskImage: "radial-gradient(ellipse at center,black,transparent 72%)" }}/>
         <div aria-hidden="true" className="absolute right-[-8rem] top-[-10rem] size-[520px] rounded-full bg-[var(--eggplant)]/30 blur-[110px]"/>
         <div aria-hidden="true" className="absolute bottom-[-11rem] left-[-4rem] size-[500px] rounded-full bg-[var(--strawberry)]/10 blur-[110px]"/>
-        <div className="relative w-full max-w-[740px] px-8 py-16 xl:px-14">
-          <div className="relative mx-auto aspect-square w-full max-w-[590px]">
+        <div className="login-art-inner relative w-full max-w-[740px]">
+          <div className="login-orbit relative mx-auto aspect-square">
             <svg viewBox="0 0 600 600" fill="none" className="absolute inset-0 size-full" aria-hidden="true">
               <defs><linearGradient id="orbital" x1="90" y1="80" x2="500" y2="520" gradientUnits="userSpaceOnUse"><stop stopColor="#FF84AE"/><stop offset=".48" stopColor="#A56BFF"/><stop offset="1" stopColor="#5EC9FF"/></linearGradient><radialGradient id="core" cx="0" cy="0" r="1" gradientTransform="matrix(0 150 -150 0 300 292)" gradientUnits="userSpaceOnUse"><stop stopColor="#FF9AC1" stopOpacity=".48"/><stop offset=".55" stopColor="#A84FE4" stopOpacity=".18"/><stop offset="1" stopColor="#1E3442" stopOpacity="0"/></radialGradient><filter id="blur"><feGaussianBlur stdDeviation="20"/></filter></defs>
               <circle cx="300" cy="292" r="203" fill="url(#core)"/><circle cx="300" cy="292" r="174" stroke="url(#orbital)" strokeOpacity=".22"/><circle cx="300" cy="292" r="130" stroke="url(#orbital)" strokeOpacity=".42" strokeDasharray="3 8"/><ellipse cx="300" cy="292" rx="202" ry="78" transform="rotate(-32 300 292)" stroke="url(#orbital)" strokeOpacity=".62"/><ellipse cx="300" cy="292" rx="202" ry="78" transform="rotate(45 300 292)" stroke="url(#orbital)" strokeOpacity=".32"/>

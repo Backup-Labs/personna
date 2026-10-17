@@ -1,13 +1,13 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faArrowDown, faArrowRight, faArrowRightFromBracket, faArrowTrendUp,
+  faArrowDown, faArrowRight, faArrowRightFromBracket, faArrowTrendUp, faBars, faBriefcase,
   faBook, faBookOpen, faBullseye, faCalendarDays, faChartLine, faCheck, faChevronDown,
   faChevronLeft, faChevronRight, faCircle, faCircleCheck, faCircleDot, faCircleExclamation, faCirclePause,
   faCirclePlay, faCircleUser, faClock, faCoins, faDatabase, faDownload, faFlag,
   faEye, faEyeSlash, faFolderOpen, faGear, faInbox, faKeyboard, faLightbulb, faListCheck, faLock,
-  faEnvelope, faMagnifyingGlass, faMinus, faNoteSticky, faPause, faPlay, faPlus, faRotateLeft,
+  faEnvelope, faMagnifyingGlass, faMinus, faNoteSticky, faPause, faPlay, faPlus, faRotateLeft, faRobot, faMessage, faReceipt,
   faScaleBalanced, faShieldHalved, faSliders, faStar, faStopwatch, faSun, faTag,
-  faTableColumns, faTriangleExclamation, faWallet, faWandMagicSparkles,
+  faTableColumns, faTriangleExclamation, faWallet, faWandMagicSparkles, faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import type { ComponentType } from "react";
@@ -26,6 +26,14 @@ export const ArrowDownLeft = icon(faArrowDown);
 export const ArrowDownToLine = icon(faDownload);
 export const ArrowRight = icon(faArrowRight);
 export const ArrowUpRight = icon(faArrowTrendUp);
+export const ArrowDown = icon(faArrowDown);
+export const Brain = icon(faLightbulb);
+export const BriefcaseBusiness = icon(faBriefcase);
+export const Bot = icon(faRobot);
+export const MessageSquareText = icon(faMessage);
+export const ReceiptText = icon(faReceipt);
+export const Menu = icon(faBars);
+export const X = icon(faXmark);
 export const BookOpen = icon(faBookOpen);
 export const CalendarClock = icon(faCalendarDays);
 export const Check = icon(faCheck);

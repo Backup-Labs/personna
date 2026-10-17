@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 
 export async function loginAction(formData: FormData): Promise<void> {
   try {
+    formData.set("redirectTo", "/dashboard");
     await signIn("credentials", formData);
   } catch (error) {
     if (error instanceof AuthError) redirect("/login?error=invalid");

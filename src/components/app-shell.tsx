@@ -7,7 +7,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   return <div className="app-frame min-h-screen">
     <a href="#main-content" className="sr-only fixed left-3 top-3 z-[100] rounded-xl bg-[var(--strawberry)] px-4 py-3 text-sm font-semibold text-[var(--ink)] focus:not-sr-only">Skip to content</a>
     <aside className="app-sidebar fixed inset-y-0 left-0 z-30 hidden flex-col border-r border-[var(--border-strong)] bg-[var(--surface-1)] px-3 py-5 lg:flex"><AppNavigation variant="sidebar"/></aside>
-    <div className="app-content min-h-screen"><AppTopbar/><main id="main-content" className="mx-auto w-full max-w-[1440px] px-4 pb-28 pt-6 sm:px-6 lg:px-8 lg:pb-10 lg:pt-8">{children}</main></div>
+    <div className="app-content min-h-screen"><AppTopbar/><main id="main-content" className="mx-auto w-full max-w-[1880px] px-4 pb-28 pt-6 sm:px-6 lg:px-8 lg:pb-10 lg:pt-8">{children}</main></div>
     <AppNavigation variant="mobile"/>
   </div>;
 }
