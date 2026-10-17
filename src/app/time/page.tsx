@@ -1,0 +1,52 @@
+import { Activity, CalendarClock, Clock3, Timer } from "@/components/ui/icons";
+import { ActionForm, Field } from "@/components/action-form";
+import { AppShell, PageHeading, Surface } from "@/components/app-shell";
+import { StatTile } from "@/components/ui/stat-tile";
+import { getDatabase } from "@/lib/db";
+import { fromZonedLocalDate, localDateKey, zonedWeekStart } from "@/lib/dates";
+import { requireUserId } from "@/server/authenticated-user";
+import { createTimeBlockAction, startTimerAction, stopTimerAction } from "@/server/actions/core";
+import type { SettingsDocument, TimeBlockDocument, TimeEntryDocument } from "@/server/db/collections";
+import { WeeklyBars } from "@/components/charts/weekly-bars";
+
+export const dynamic = "force-dynamic";
+
+export default async function TimePage() {
+  const userId = await requireUserId();
+  const db = await getDatabase();
+  const settings = await db.collection<SettingsDocument>("settings").findOne({ userId, deletedAt: null });
+  const timezone = settings?.timezone ?? "Africa/Kigali";
+  const locale = settings?.locale ?? "en-RW";
+  const now = new Date();
+  const weekStart = zonedWeekStart(now, timezone, settings?.weekStartsOn ?? 1).start;
+  const weekStartInstant = fromZonedLocalDate(weekStart, timezone);
+  const weekEndDate = new Date(`${weekStart}T00:00:00.000Z`);
+  weekEndDate.setUTCDate(weekEndDate.getUTCDate() + 7);
+  const weekEndKey = weekEndDate.toISOString().slice(0, 10);
+  const weekEndInstant = fromZonedLocalDate(weekEndKey, timezone);
+  const [blocks, running, entries, weekBlocks, weekEntries] = await Promise.all([
+    db.collection<TimeBlockDocument>("timeBlocks").find({ userId, deletedAt: null, end: { $gte: now } }).sort({ start: 1 }).limit(40).toArray(),
+    db.collection<TimeEntryDocument>("timeEntries").findOne({ userId, end: null, deletedAt: null }),
+    db.collection<TimeEntryDocument>("timeEntries").find({ userId, end: { $ne: null }, deletedAt: null }).sort({ start: -1 }).limit(30).toArray(),
+    db.collection<TimeBlockDocument>("timeBlocks").find({ userId, deletedAt: null, start: { $gte: weekStartInstant, $lt: weekEndInstant } }).limit(100).toArray(),
+    db.collection<TimeEntryDocument>("timeEntries").find({ userId, deletedAt: null, start: { $gte: weekStartInstant, $lt: now } }).limit(200).toArray(),
+  ]);
+  const actualMinutes = weekEntries.reduce((total, entry) => total + Math.max(0, Math.round(((entry.end ?? now).getTime() - Math.max(entry.start.getTime(), weekStartInstant.getTime())) / 60_000)), 0);
+  const plannedMinutes = weekBlocks.reduce((total, block) => total + Math.round((block.end.getTime() - block.start.getTime()) / 60_000), 0);
+  const focusActivity = Array.from({ length: 7 }, (_, offset) => { const date = new Date(`${weekStart}T12:00:00.000Z`); date.setUTCDate(date.getUTCDate() + offset); const key = date.toISOString().slice(0, 10); return { label: new Intl.DateTimeFormat(locale, { weekday: "short", timeZone: "UTC" }).format(date), value: weekEntries.filter(entry => localDateKey(entry.start, timezone) === key).reduce((sum, entry) => sum + Math.max(0, Math.round(((entry.end ?? now).getTime() - entry.start.getTime()) / 60_000)), 0) }; });
+  const dateTime = new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short", timeZone: timezone });
+  const timeOnly = new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit", timeZone: timezone });
+  return <AppShell>
+    <PageHeading title="Time" description="Plan focused blocks, protect space for meaningful work, and compare what you planned with what happened." actions={<a href="#plan-block" className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-[var(--strawberry)] px-4 text-xs font-semibold text-[var(--ink)]"><CalendarClock size={16}/>Plan a block</a>}/>
+    <div className="mb-5 grid gap-3 sm:grid-cols-3"><StatTile label="Focused this week" value={`${Math.floor(actualMinutes / 60)}h ${actualMinutes % 60}m`} detail="Recorded sessions" icon={Activity}/><StatTile label="Planned this week" value={`${Math.floor(plannedMinutes / 60)}h ${plannedMinutes % 60}m`} detail={`${weekBlocks.length} scheduled blocks`} icon={CalendarClock}/><StatTile label="Timer" value={running ? "Running" : "Ready"} detail={running ? `Started ${timeOnly.format(running.start)}` : "Start a focus session when ready"} icon={Timer}/></div>
+    <div className="mb-5"><WeeklyBars title="Focus by day" description="Recorded minutes in the current week." points={focusActivity}/></div>
+    <div className="grid gap-5 xl:grid-cols-12">
+      <Surface className="xl:col-span-8"><div className="mb-4 flex items-center justify-between"><div><p className="metric-label"><CalendarClock size={14}/> SCHEDULE</p><h2 className="mt-1 font-display text-lg font-semibold">Upcoming blocks</h2></div><span className="rounded-full border border-[var(--border-strong)] px-2.5 py-1 font-mono text-[10px] text-[var(--muted)]">{blocks.length}</span></div>{blocks.length ? <ol className="divide-y divide-[var(--border)]">{blocks.map(block => <li key={block._id!.toHexString()} className="flex gap-4 py-4"><div className="w-24 shrink-0"><p className="font-mono text-xs font-medium tabular-nums">{timeOnly.format(block.start)}</p><p className="mt-1 text-[10px] text-[var(--muted)]">{timeOnly.format(block.end)}</p></div><div className="min-w-0 flex-1 border-l-2 border-[var(--strawberry)] pl-4"><p className="text-sm font-medium">{block.title}</p><p className="mt-1 text-xs text-[var(--muted)]">{block.category} · {dateTime.format(block.start)}</p></div></li>)}</ol> : <div className="rounded-2xl border border-dashed border-[var(--border-strong)] px-4 py-8 text-center"><CalendarClock className="mx-auto size-6 text-[var(--muted)]"/><p className="mt-2 text-sm font-semibold">No time blocks planned</p><p className="mt-1 text-xs text-[var(--muted)]">Protect a little time for your next important task.</p></div>}</Surface>
+      <div className="space-y-5 xl:col-span-4">
+        <Surface><div className="mb-4 flex items-center gap-3"><span className="grid size-10 place-items-center rounded-xl border border-[var(--border)] bg-[var(--surface-2)] text-[var(--strawberry)]"><Timer size={19}/></span><div><p className="font-display text-lg font-semibold">Focus timer</p><p className="text-xs text-[var(--muted)]">Persistent across page reloads.</p></div></div>{running ? <><p className="mb-4 rounded-xl border border-[var(--success)]/30 bg-[color-mix(in_srgb,var(--success),transparent_94%)] p-3 text-sm">Session started at {dateTime.format(running.start)}</p><form action={async () => { "use server"; await stopTimerAction(); }}><button className="min-h-11 w-full rounded-xl border border-[var(--danger)]/50 px-4 text-sm font-semibold text-[var(--danger)]">Stop session</button></form></> : <><p className="mb-4 text-sm leading-6 text-[var(--muted)]">Start a focus session. Personna will save the actual duration when you stop.</p><form action={async () => { "use server"; await startTimerAction(new FormData()); }}><button className="min-h-11 w-full rounded-xl bg-[var(--strawberry)] px-4 text-sm font-semibold text-[var(--ink)]">Start focus session</button></form></>}</Surface>
+        <Surface id="plan-block"><div className="mb-4"><p className="metric-label"><Clock3 size={14}/> TIME BLOCK</p><h2 className="mt-1 font-display text-lg font-semibold">Plan your next block</h2></div><ActionForm action={createTimeBlockAction}><Field label="Block title" name="title" required/><Field label="Starts" name="start" type="datetime-local" required/><Field label="Ends" name="end" type="datetime-local" required/><Field label="Category" name="category" defaultValue="Focus"/></ActionForm></Surface>
+      </div>
+      <Surface className="xl:col-span-12"><div className="mb-4"><p className="metric-label"><Activity size={14}/> RECENT ACTIVITY</p><h2 className="mt-1 font-display text-lg font-semibold">Completed sessions</h2></div>{entries.length ? <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{entries.map(entry => <li key={entry._id!.toHexString()} className="rounded-xl border border-[var(--border)] bg-[var(--surface-2)] p-3"><p className="text-sm font-medium">{entry.source === "TIMER" ? "Focus timer" : "Manual session"}</p><p className="mt-1 text-xs text-[var(--muted)]">{dateTime.format(entry.start)} · {Math.round(((entry.end?.getTime() ?? entry.start.getTime()) - entry.start.getTime()) / 60_000)} min</p></li>)}</ul> : <p className="text-sm text-[var(--muted)]">Completed sessions will appear here.</p>}</Surface>
+    </div>
+  </AppShell>;
+}

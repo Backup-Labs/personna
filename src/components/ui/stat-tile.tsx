@@ -1,0 +1,5 @@
+import type { LucideIcon } from "@/components/ui/icons";
+
+export function StatTile({ label, value, detail, icon: Icon, trend }: { label: string; value: string | number; detail?: string; icon?: LucideIcon; trend?: { value: string; positive?: boolean } }) {
+  return <section className="min-w-[220px] rounded-[20px] border border-[var(--border-strong)] bg-[var(--surface-1)] p-4 sm:min-w-0 sm:p-5"><div className="flex items-center justify-between gap-2"><p className="metric-label">{label}</p>{Icon && <Icon size={18} className="text-[var(--strawberry)]"/>}</div><div className="mt-3 flex flex-wrap items-baseline gap-2"><p className="metric-number font-display text-3xl font-semibold tracking-tight sm:text-4xl">{value}</p>{trend && <span className={`rounded-full border px-2 py-0.5 text-[10px] font-medium ${trend.positive ? "border-[var(--success)]/30 text-[var(--success)]" : "border-[var(--border)] text-[var(--muted)]"}`}>{trend.value}</span>}</div>{detail && <p className="mt-1 text-xs text-[var(--muted)]">{detail}</p>}</section>;
+}
