@@ -1,12 +1,12 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faArrowDown, faArrowRight, faArrowRightFromBracket, faArrowTrendUp, faBars, faBriefcase,
+  faArrowDown, faArrowLeft, faArrowRight, faArrowRightFromBracket, faArrowTrendUp, faBars, faBriefcase,
   faBook, faBookOpen, faBullseye, faCalendarDays, faChartLine, faCheck, faChevronDown,
   faChevronLeft, faChevronRight, faCircle, faCircleCheck, faCircleDot, faCircleExclamation, faCirclePause,
   faCirclePlay, faCircleUser, faClock, faCoins, faDatabase, faDownload, faFlag,
-  faEye, faEyeSlash, faFolderOpen, faGear, faInbox, faKeyboard, faLightbulb, faListCheck, faLock,
+  faEye, faEyeSlash, faFolderOpen, faGear, faGripVertical, faInbox, faKeyboard, faLightbulb, faListCheck, faLock,
   faEnvelope, faMagnifyingGlass, faMinus, faNoteSticky, faPause, faPlay, faPlus, faRotateLeft, faRobot, faMessage, faReceipt,
-  faScaleBalanced, faShieldHalved, faSliders, faStar, faStopwatch, faSun, faTag,
+  faScaleBalanced, faShieldHalved, faSliders, faStar, faStopwatch, faSun, faTag, faTrash, faPenToSquare,
   faTableColumns, faTriangleExclamation, faWallet, faWandMagicSparkles, faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
@@ -25,6 +25,7 @@ export const AlertTriangle = icon(faTriangleExclamation);
 export const ArrowDownLeft = icon(faArrowDown);
 export const ArrowDownToLine = icon(faDownload);
 export const ArrowRight = icon(faArrowRight);
+export const ArrowLeft = icon(faArrowLeft);
 export const ArrowUpRight = icon(faArrowTrendUp);
 export const ArrowDown = icon(faArrowDown);
 export const Brain = icon(faLightbulb);
@@ -57,6 +58,9 @@ export const FileText = icon(faNoteSticky);
 export const Flag = icon(faFlag);
 export const FolderKanban = icon(faFolderOpen);
 export const Goal = icon(faBullseye);
+export const Grip = icon(faGripVertical);
+export const Trash = icon(faTrash);
+export const Edit3 = icon(faPenToSquare);
 export const Inbox = icon(faInbox);
 export const LayoutDashboard = icon(faTableColumns);
 export const LibraryBig = icon(faBook);

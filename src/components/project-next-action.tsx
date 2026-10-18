@@ -2,7 +2,7 @@
 import { useActionState } from "react";
 import { ArrowRight, Check } from "@/components/ui/icons";
 import { CustomSelect } from "@/components/action-form";
-import { setProjectNextActionAction } from "@/server/actions/core";
+import { setProjectNextActionAction } from "@/server/actions/projects";
 
 type Candidate = { id: string; title: string };
 type Result = { ok: boolean; error?: string } | null;

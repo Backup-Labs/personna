@@ -1,7 +1,7 @@
 "use client";
 import { useActionState } from "react";
 import { Play, Pause } from "@/components/ui/icons";
-import { updateProjectStatusAction } from "@/server/actions/core";
+import { updateProjectStatusAction } from "@/server/actions/projects";
 import type { ProjectDocument } from "@/server/db/collections";
 
 export function ProjectStatusButton({ projectId, status }: { projectId: string; status: ProjectDocument["status"] }) {

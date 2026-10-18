@@ -184,6 +184,10 @@ pre, code { max-width: 100%; overflow-wrap: anywhere; }
 }
 .nav-link, .mobile-capture, .brand-mark { border-radius: 7px; }
 :root { color-scheme: dark; }
+.route-progress { position: fixed; z-index: 1000; inset: 0 0 auto; height: 3px; overflow: hidden; background: color-mix(in srgb, var(--strawberry), transparent 84%); pointer-events: none; }
+.route-progress-bar { display: block; width: 36%; height: 100%; border-radius: 0 999px 999px 0; background: var(--strawberry); box-shadow: 0 0 12px color-mix(in srgb, var(--strawberry), transparent 24%); animation: route-progress-run 1.15s ease-in-out infinite; }
+@keyframes route-progress-run { 0% { transform: translateX(-115%); } 100% { transform: translateX(380%); } }
+@media (prefers-reduced-motion: reduce) { .route-progress-bar { animation-duration: 2.5s; } }
 
 /* Public marketing landing page */
 .landing-page {

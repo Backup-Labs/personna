@@ -1,9 +1,10 @@
 import { ArrowDownLeft, ArrowUpRight, CircleDollarSign, Plus, Scale, ShieldCheck, Target, Wallet } from "@/components/ui/icons";
 import { ActionForm, Field } from "@/components/action-form";
 import { AppShell, PageHeading, Surface } from "@/components/app-shell";
-import { createAccountAction, createBudgetAction, createCategoryAction, createDebtAction, createSavingsGoalAction, createTransactionAction } from "@/server/actions/core";
+import { createAccountAction, createBudgetAction, createCategoryAction, createDebtAction, createSavingsGoalAction, createTransactionAction, updateTransactionAction } from "@/server/actions/core";
 import { getDatabase } from "@/lib/db";
-import { formatMoney } from "@/lib/money";
+import { formatMoney, fromMinor } from "@/lib/money";
+import { TransactionDeleteButton } from "@/components/transaction-delete-button";
 import { fromZonedLocalDate, localDateKey, zonedMonthStart } from "@/lib/dates";
 import { requireUserId } from "@/server/authenticated-user";
 import type { AccountDocument, BudgetDocument, CategoryDocument, DebtDocument, SavingsGoalDocument, SettingsDocument, TransactionDocument } from "@/server/db/collections";
@@ -86,7 +87,26 @@ export default async function FinancePage() {
 
       <Surface className="xl:col-span-7">
         <div className="mb-4"><p className="metric-label"><CircleDollarSign size={14}/> LEDGER</p><h2 className="mt-1 font-display text-lg font-semibold">Recent transactions</h2></div>
-        {transactions.length ? <div className="overflow-x-auto"><table className="w-full min-w-[540px] text-left text-xs"><thead className="border-b border-[var(--border-strong)] text-[var(--muted)]"><tr><th className="pb-3 font-medium">Transaction</th><th className="pb-3 font-medium">Category</th><th className="pb-3 font-medium">Date</th><th className="pb-3 text-right font-medium">Amount</th></tr></thead><tbody>{transactions.map(tx=><tr key={tx._id!.toHexString()} className="border-b border-[var(--border)] last:border-0"><td className="py-3">{tx.note||tx.type}</td><td className="py-3 text-[var(--muted)]">{tx.categoryId?categoryById.get(tx.categoryId.toHexString())?.name??"Other":"Uncategorized"}</td><td className="py-3 text-[var(--muted)]">{tx.occurredAt.toLocaleDateString(locale,{timeZone:timezone})}</td><td className={`py-3 text-right font-mono ${tx.type==="EXPENSE"?"text-[var(--danger)]":"text-[var(--success)]"}`}>{tx.type==="EXPENSE"?"−":"+"}{formatMoney(tx.amountMinor,tx.currency,locale)}</td></tr>)}</tbody></table></div> : <EmptyState icon={CircleDollarSign} title="No transactions yet" description="Your financial activity will show here after your first entry."/>}
+        {transactions.length ? (
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[760px] text-left text-xs">
+              <thead className="border-b border-[var(--border-strong)] text-[var(--muted)]"><tr><th className="pb-3 font-medium">Transaction</th><th className="pb-3 font-medium">Category</th><th className="pb-3 font-medium">Date</th><th className="pb-3 text-right font-medium">Amount</th><th className="pb-3 text-right font-medium">Manage</th></tr></thead>
+              <tbody>{transactions.map(tx => {
+                const transactionId = tx._id!.toHexString();
+                return <tr key={transactionId} className="border-b border-[var(--border)] last:border-0">
+                  <td className="py-3">{tx.note || tx.type}</td>
+                  <td className="py-3 text-[var(--muted)]">{tx.categoryId ? categoryById.get(tx.categoryId.toHexString())?.name ?? "Other" : "Uncategorized"}</td>
+                  <td className="py-3 text-[var(--muted)]">{tx.occurredAt.toLocaleDateString(locale, { timeZone: timezone })}</td>
+                  <td className={`py-3 text-right font-mono ${tx.type === "EXPENSE" ? "text-[var(--danger)]" : "text-[var(--success)]"}`}>{tx.type === "EXPENSE" ? "−" : "+"}{formatMoney(tx.amountMinor, tx.currency, locale)}</td>
+                  <td className="py-2"><div className="flex items-center justify-end gap-1">
+                    {tx.type !== "TRANSFER" && <details className="relative"><summary className="grid size-8 cursor-pointer list-none place-items-center rounded-lg px-1 text-[10px] text-[var(--muted)] hover:bg-[var(--surface-2)]">Edit</summary><div className="absolute right-0 z-20 mt-2 w-[min(88vw,360px)] rounded-xl border border-[var(--border-strong)] bg-[var(--surface-1)] p-4 shadow-xl"><ActionForm action={updateTransactionAction.bind(null, transactionId)} submitLabel="Save transaction"><Field label="Account" name="accountId"><select name="accountId" defaultValue={tx.accountId.toHexString()}>{accounts.map(account => <option key={account._id!.toHexString()} value={account._id!.toHexString()}>{account.name} · {account.currency}</option>)}</select></Field><Field label="Type" name="type"><select name="type" defaultValue={tx.type}><option value="EXPENSE">Expense</option><option value="INCOME">Income</option></select></Field><Field label="Category" name="categoryId"><select name="categoryId" defaultValue={tx.categoryId?.toHexString() ?? ""}><option value="">Uncategorized</option>{categories.map(category => <option key={category._id!.toHexString()} value={category._id!.toHexString()}>{category.name} ({category.kind.toLowerCase()})</option>)}</select></Field><Field label="Amount" name="amount" type="number" required defaultValue={String(fromMinor(tx.amountMinor, tx.currency))}/><Field label="Date" name="occurredAt" type="date" defaultValue={localDateKey(tx.occurredAt, timezone)}/><Field label="Note" name="note" defaultValue={tx.note}/></ActionForm></div></details>}
+                    <TransactionDeleteButton transactionId={transactionId}/>
+                  </div></td>
+                </tr>;
+              })}</tbody>
+            </table>
+          </div>
+        ) : <EmptyState icon={CircleDollarSign} title="No transactions yet" description="Your financial activity will show here after your first entry."/>}
       </Surface>
     </div>
   </AppShell>;

@@ -3,8 +3,8 @@ import { ActionForm, Field } from "@/components/action-form";
 import { AppShell, PageHeading, Surface } from "@/components/app-shell";
 import { SectionHeader } from "@/components/patterns/section-header";
 import { StatTile } from "@/components/ui/stat-tile";
-import { CompleteTaskButton, TopTaskButton } from "@/components/task-controls";
-import { createTaskAction } from "@/server/actions/core";
+import { CompleteTaskButton, DeleteTaskButton, TopTaskButton } from "@/components/task-controls";
+import { createTaskAction, updateTaskAction } from "@/server/actions/core";
 import { getDatabase } from "@/lib/db";
 import { fromZonedLocalDate, localDateKey } from "@/lib/dates";
 import { requireUserId } from "@/server/authenticated-user";
@@ -49,5 +49,36 @@ export default async function TasksPage() {
 
 function TaskRow({ task, projectName, locale, timezone }: { task: TaskDocument; projectName?: string; locale: string; timezone: string }) {
   const done = task.status === "DONE";
-  return <li className="flex items-center gap-3 py-3"><CompleteTaskButton taskId={task._id!.toHexString()} done={done}/><div className="min-w-0 flex-1"><p className={`truncate text-sm font-medium ${done ? "text-[var(--muted)] line-through" : ""}`}>{task.title}</p><div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[10px] text-[var(--muted)]"><span className={`rounded-full border px-2 py-0.5 ${task.priority === "HIGH" ? "border-[var(--warning)]/60 text-[var(--warning)]" : "border-[var(--border)]"}`}>{task.priority.toLowerCase()}</span><span>{task.status.toLowerCase()}</span>{projectName && <span>{projectName}</span>}{task.dueDate && <span className="inline-flex items-center gap-1"><CalendarClock size={11}/>{task.dueDate.toLocaleDateString(locale, { timeZone: timezone })}</span>}</div></div>{!done && <TopTaskButton taskId={task._id!.toHexString()} selected={task.isTop3Today}/>}</li>;
+  const taskId = task._id!.toHexString();
+  return (
+    <li className="py-3">
+      <div className="flex items-center gap-3">
+        <CompleteTaskButton taskId={taskId} done={done}/>
+        <div className="min-w-0 flex-1">
+          <p className={`truncate text-sm font-medium ${done ? "text-[var(--muted)] line-through" : ""}`}>{task.title}</p>
+          <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[10px] text-[var(--muted)]">
+            <span className={`rounded-full border px-2 py-0.5 ${task.priority === "HIGH" ? "border-[var(--warning)]/60 text-[var(--warning)]" : "border-[var(--border)]"}`}>{task.priority.toLowerCase()}</span>
+            <span>{task.status.toLowerCase()}</span>
+            {projectName && <span>{projectName}</span>}
+            {task.dueDate && <span className="inline-flex items-center gap-1"><CalendarClock size={11}/>{task.dueDate.toLocaleDateString(locale, { timeZone: timezone })}</span>}
+          </div>
+        </div>
+        {!done && <TopTaskButton taskId={taskId} selected={task.isTop3Today}/>}
+        <DeleteTaskButton taskId={taskId}/>
+        <details className="relative">
+          <summary className="grid size-8 cursor-pointer list-none place-items-center rounded-lg text-[10px] text-[var(--muted)] hover:bg-[var(--surface-2)]">Edit</summary>
+          <div className="absolute right-0 z-20 mt-2 w-[min(88vw,360px)] rounded-xl border border-[var(--border-strong)] bg-[var(--surface-1)] p-4 shadow-xl">
+            <ActionForm action={updateTaskAction.bind(null, taskId)} submitLabel="Save changes">
+              <input type="hidden" name="projectId" value={task.projectId?.toHexString() ?? ""}/>
+              <input type="hidden" name="goalId" value={task.goalId?.toHexString() ?? ""}/>
+              <Field label="Task title" name="title" required defaultValue={task.title}/>
+              <Field label="Notes" name="notes"><textarea name="notes" rows={3} defaultValue={task.notes} className="form-control"/></Field>
+              <Field label="Priority" name="priority"><select name="priority" defaultValue={task.priority} className="form-control"><option value="LOW">Low</option><option value="MEDIUM">Medium</option><option value="HIGH">High</option></select></Field>
+              <Field label="Due date" name="dueDate" type="date" defaultValue={task.dueDate ? localDateKey(task.dueDate, timezone) : ""}/>
+            </ActionForm>
+          </div>
+        </details>
+      </div>
+    </li>
+  );
 }

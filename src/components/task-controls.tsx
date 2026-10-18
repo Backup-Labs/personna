@@ -1,7 +1,7 @@
 "use client";
 import { useActionState } from "react";
-import { Check, Circle, Star } from "@/components/ui/icons";
-import { setTaskStatusAction, setTopTaskAction } from "@/server/actions/core";
+import { Check, Circle, Star, Trash } from "@/components/ui/icons";
+import { deleteTaskAction, setTaskStatusAction, setTopTaskAction } from "@/server/actions/core";
 
 function normalize(result: { ok: true } | { ok: false; error: string }) { return result.ok ? { ok: true } : { ok: false, error: result.error }; }
 
@@ -13,6 +13,15 @@ export function CompleteTaskButton({ taskId, done }: { taskId: string; done: boo
 export function TopTaskButton({ taskId, selected }: { taskId: string; selected: boolean }) {
   const [state, action, pending] = useActionState(async () => normalize(await setTopTaskAction(taskId, !selected)), null);
   return <form action={action} className="flex flex-col items-center"><button disabled={pending} aria-label={selected ? "Remove from today's priorities" : "Add to today's priorities"} title={selected ? "Remove from today" : "Add to today"} className={`grid size-8 place-items-center rounded-lg border transition ${selected ? "border-[var(--strawberry)] bg-[color-mix(in_srgb,var(--strawberry),transparent_88%)] text-[var(--strawberry)]" : "border-[var(--border-strong)] text-[var(--muted)] hover:border-[var(--strawberry)] hover:text-[var(--strawberry)]"}`}><Star size={15} fill={selected ? "currentColor" : "none"}/></button>{state && !state.ok && <span role="alert" className="mt-1 max-w-36 text-center text-[9px] text-[var(--danger)]">{state.error}</span>}</form>;
+}
+
+export function DeleteTaskButton({ taskId }: { taskId: string }) {
+  const [state, action, pending] = useActionState(async () => normalize(await deleteTaskAction(taskId)), null);
+  return <form action={action} onSubmit={event => { if (!window.confirm("Delete this task? It will be removed from your lists.")) event.preventDefault(); }} className="flex flex-col items-center">
+    <button type="submit" disabled={pending} aria-label="Delete task" title="Delete task" className="grid size-8 place-items-center rounded-lg text-[var(--muted)] transition hover:bg-[color-mix(in_srgb,var(--danger),transparent_90%)] hover:text-[var(--danger)] disabled:opacity-50"><Trash size={14}/></button>
+    {state && !state.ok && <span role="alert" className="max-w-36 text-center text-[9px] text-[var(--danger)]">{state.error}</span>}
+    {state?.ok && <span role="status" className="text-[9px] text-[var(--success)]">Deleted</span>}
+  </form>;
 }
 
 export function TaskStatusIcon({ done }: { done: boolean }) { return done ? <Check size={14}/> : <Circle size={14}/>; }

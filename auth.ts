@@ -36,16 +36,16 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         const clientKey = createHash("sha256").update(clientIp).digest("hex");
         const rateLimitId = `credentials:${clientKey}:${bucket}`;
         const rateLimits = db.collection<{ _id: string; attempts: number; expiresAt: Date }>("authAttempts");
-        await rateLimits.updateOne(
-          { _id: rateLimitId },
-          { $inc: { attempts: 1 }, $setOnInsert: { expiresAt: new Date((bucket + 1) * ATTEMPT_WINDOW_MS) } },
-          { upsert: true },
-        );
-        const rateLimit = await rateLimits.findOne({ _id: rateLimitId });
+        const [rateLimit, user] = await Promise.all([
+          rateLimits.findOneAndUpdate(
+            { _id: rateLimitId },
+            { $inc: { attempts: 1 }, $setOnInsert: { expiresAt: new Date((bucket + 1) * ATTEMPT_WINDOW_MS) } },
+            { upsert: true, returnDocument: "after", projection: { attempts: 1 } },
+          ),
+          db.collection<UserDocument>("users").findOne({ email: parsed.data.email.toLowerCase(), deletedAt: null }),
+        ]);
         if (!rateLimit || rateLimit.attempts > MAX_ATTEMPTS_PER_WINDOW) return null;
 
-        const email = parsed.data.email.toLowerCase();
-        const user = await db.collection<UserDocument>("users").findOne({ email, deletedAt: null });
         const passwordHash = user?.passwordHash ?? await (dummyPasswordHash ??= hash("personna-credential-check", 12));
         const passwordMatches = await compare(parsed.data.password, passwordHash);
         if (!user?._id || !user.passwordHash || !passwordMatches) return null;

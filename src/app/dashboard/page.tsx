@@ -17,7 +17,8 @@ import { WeeklyBars } from "@/components/charts/weekly-bars";
 export const dynamic = "force-dynamic";
 
 export default async function Dashboard() {
-  const [userId, session] = await Promise.all([requireUserId(), auth()]);
+  const session = await auth();
+  const userId = await requireUserId(session);
   const db = await getDatabase();
   const settings = await db.collection<SettingsDocument>("settings").findOne({ userId, deletedAt: null });
   const timezone = settings?.timezone ?? "Africa/Kigali";

@@ -10,7 +10,13 @@ declare global {
 export async function getDatabase(): Promise<Db> {
   const env = getEnvironment();
   globalThis.personnaDatabase ??= (async () => {
-    const client = await (globalThis.personnaMongoClient ??= new MongoClient(env.MONGODB_URI).connect());
+    const client = await (globalThis.personnaMongoClient ??= new MongoClient(env.MONGODB_URI, {
+      appName: "Personna",
+      maxPoolSize: 20,
+      serverSelectionTimeoutMS: 5_000,
+      connectTimeoutMS: 10_000,
+      socketTimeoutMS: 45_000,
+    }).connect());
     const db = client.db(env.MONGODB_DB);
     await ensureIndexes(db);
     return db;
