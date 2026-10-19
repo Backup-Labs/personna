@@ -8,6 +8,9 @@ import { ProjectNextAction } from "@/components/project-next-action";
 import { ProjectStatusButton } from "@/components/project-status-button";
 import { createProjectAction, deleteProjectAction, updateProjectAction, updateProjectStatusAction } from "@/server/actions/projects";
 import type { ProjectDocument } from "@/server/db/collections";
+import { ActionToast } from "@/components/action-toast";
+import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
+import { useNotify } from "@/components/feedback-provider";
 
 type ProjectStatus = ProjectDocument["status"];
 type ProjectPriority = ProjectDocument["priority"];
@@ -46,6 +49,7 @@ export function ProjectBoard({ projects, goals, activeLimit }: { projects: Proje
   const [dragOver, setDragOver] = useState<ProjectStatus | null>(null);
   const [message, setMessage] = useState("");
   const [pending, startTransition] = useTransition();
+  const notify = useNotify();
 
   useEffect(() => setStatusOverrides({}), [projects]);
 
@@ -72,9 +76,11 @@ export function ProjectBoard({ projects, goals, activeLimit }: { projects: Proje
       if (!result.ok) {
         setStatusOverrides(current => ({ ...current, [projectId]: original }));
         setMessage(result.error ?? "Could not move the project.");
+        notify("error", result.error ?? "Could not move the project.");
         return;
       }
       setMessage(`Moved to ${statusLabels[status]}.`);
+      notify("success", `Project moved to ${statusLabels[status]}.`);
       router.refresh();
     });
   }
@@ -139,7 +145,7 @@ function ProjectEditForm({ project, goals }: { project: ProjectCardData; goals: 
     <Field label="Priority" name="priority" required defaultValue={project.priority}><select name="priority" defaultValue={project.priority}><option value="HIGH">High</option><option value="MEDIUM">Medium</option><option value="LOW">Low</option></select></Field>
     <Field label="Deadline" name="deadline" type="date" defaultValue={project.deadline ?? ""}/>
     <Field label="Linked goal" name="goalId" defaultValue={project.goalId ?? ""}><select name="goalId" defaultValue={project.goalId ?? ""}><option value="">No linked goal</option>{goals.map(goal => <option key={goal.id} value={goal.id}>{goal.title}</option>)}</select></Field>
-    {state && !state.ok && <p className="text-xs text-[var(--danger)]" role="alert">{state.error}</p>}{state?.ok && <p className="text-xs text-[var(--success)]" role="status">Changes saved.</p>}
+    <ActionToast result={state} successMessage="Project changes saved."/>{state && !state.ok && <p className="text-xs text-[var(--danger)]" role="alert">{state.error}</p>}{state?.ok && <p className="text-xs text-[var(--success)]" role="status">Changes saved.</p>}
     <button type="submit" disabled={pending} className="min-h-9 rounded-lg bg-[var(--strawberry)] px-3 text-xs font-semibold text-[var(--ink)] disabled:cursor-wait disabled:opacity-60">{pending ? "Saving…" : "Save changes"}</button>
   </form>;
 }
@@ -148,12 +154,12 @@ function DeleteProjectButton({ projectId, title }: { projectId: string; title: s
   const [state, action, pending] = useActionState(async (previous: Result, form: FormData) => {
     void previous;
     void form;
-    if (!window.confirm(`Remove “${title}”? Linked tasks, notes, time, and finance records will be kept without the project link.`)) return null;
     return deleteProjectAction(projectId);
   }, null);
   return <form action={action} className="ml-auto flex items-center gap-2">
+    <ActionToast result={state} successMessage="Project removed."/>
     {state && !state.ok && <span role="alert" className="max-w-36 text-[10px] text-[var(--danger)]">{state.error}</span>}
-    <button type="submit" disabled={pending} aria-label={`Delete ${title}`} title="Delete project" className="grid size-8 place-items-center rounded-lg text-[var(--muted)] hover:bg-[color-mix(in_srgb,var(--danger),transparent_90%)] hover:text-[var(--danger)] disabled:opacity-50"><Trash size={13}/></button>
+    <ConfirmSubmitButton disabled={pending} title={`Remove “${title}”?`} description="Linked tasks, notes, time, and finance records will be kept without the project link." confirmLabel="Remove project" className="grid size-8 cursor-pointer place-items-center rounded-lg text-[var(--muted)] hover:bg-[color-mix(in_srgb,var(--danger),transparent_90%)] hover:text-[var(--danger)] disabled:opacity-50"><Trash size={13}/></ConfirmSubmitButton>
   </form>;
 }
 
@@ -165,7 +171,7 @@ export function CreateProjectForm({ goals }: { goals: GoalChoice[] }) {
     <Field label="Priority" name="priority"><select name="priority" defaultValue="MEDIUM"><option value="MEDIUM">Medium</option><option value="HIGH">High</option><option value="LOW">Low</option></select></Field>
     <Field label="Deadline" name="deadline" type="date"/>
     <Field label="Linked goal" name="goalId"><select name="goalId" defaultValue=""><option value="">No linked goal</option>{goals.map(goal => <option key={goal.id} value={goal.id}>{goal.title}</option>)}</select></Field>
-    {state && !state.ok && <p className="text-xs text-[var(--danger)]" role="alert">{state.error}</p>}{state?.ok && <p className="text-xs text-[var(--success)]" role="status">Project created.</p>}
+    <ActionToast result={state} successMessage="Project created."/>{state && !state.ok && <p className="text-xs text-[var(--danger)]" role="alert">{state.error}</p>}{state?.ok && <p className="text-xs text-[var(--success)]" role="status">Project created.</p>}
     <button type="submit" disabled={pending} className="min-h-11 rounded-xl bg-[var(--strawberry)] px-4 text-sm font-semibold text-[var(--ink)] disabled:cursor-wait disabled:opacity-60">{pending ? "Creating…" : "Create project"}</button>
   </form>;
 }

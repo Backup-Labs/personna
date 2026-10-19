@@ -3,12 +3,14 @@
 import { useActionState, useState } from "react";
 import { CircleUserRound, Envelope, Eye, EyeSlash, LockKeyhole } from "@/components/ui/icons";
 import { signupAction, type SignupState } from "./actions";
+import { ActionToast } from "@/components/action-toast";
 
 const initialState: SignupState = {};
 
 export function SignupForm() {
   const [state, action, pending] = useActionState(signupAction, initialState);
   return <form action={action} className="signup-form mt-5 space-y-3.5">
+    <ActionToast result={state} successMessage="Your account is ready."/>
     <label className="block text-sm font-semibold text-[var(--tan)]">Your name
       <span className="relative mt-1.5 block"><CircleUserRound size={16} className="login-field-icon"/><input required autoComplete="name" maxLength={80} name="name" type="text" placeholder="How should we address you?" className="form-control login-input h-12 text-sm placeholder:text-[var(--muted)]"/></span>
     </label>

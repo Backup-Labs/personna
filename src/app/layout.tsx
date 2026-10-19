@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
 import { RouteProgress } from "@/components/route-progress";
+import { FeedbackProvider } from "@/components/feedback-provider";
 import { getSiteUrl } from "@/lib/site-url";
 
 export const metadata: Metadata = {
@@ -11,5 +12,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
-  return <html lang="en" className="dark"><head><link rel="preconnect" href="https://api.fontshare.com"/><link rel="preconnect" href="https://fonts.fontshare.com" crossOrigin="anonymous"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous"/></head><body><RouteProgress/>{children}</body></html>;
+  return <html lang="en" className="dark"><head><link rel="preconnect" href="https://api.fontshare.com"/><link rel="preconnect" href="https://fonts.fontshare.com" crossOrigin="anonymous"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous"/></head><body><FeedbackProvider><RouteProgress/>{children}</FeedbackProvider></body></html>;
 }

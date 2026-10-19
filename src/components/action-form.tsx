@@ -4,13 +4,14 @@ import { useActionState } from "react";
 import { Children, isValidElement, useMemo, useState } from "react";
 import type { ReactElement, ReactNode } from "react";
 import { CalendarClock, ChevronDown, ChevronLeft, ChevronRight } from "@/components/ui/icons";
+import { ActionToast } from "@/components/action-toast";
 
 type Result = { ok: boolean; error?: string } | null;
 type FormAction = (formData: FormData) => Promise<{ ok: boolean; error?: string }>;
 
 export function ActionForm({ action, children, submitLabel = "Save" }: { action: FormAction; children: ReactNode; submitLabel?: string }) {
   const [state, formAction, pending] = useActionState(async (_previous: Result, formData: FormData) => action(formData), null);
-  return <form action={formAction} className="space-y-3">{children}{state?.error && <p role="alert" aria-live="assertive" className="text-sm text-[var(--danger)]">{state.error}</p>}{state?.ok && <p role="status" aria-live="polite" className="text-sm text-[var(--success)]">Saved.</p>}<button disabled={pending} className="min-h-11 rounded-xl bg-[var(--strawberry)] px-4 py-2.5 text-sm font-semibold text-[var(--ink)] transition hover:shadow-[0_0_24px_color-mix(in_srgb,var(--strawberry),transparent_65%)] disabled:cursor-wait disabled:opacity-60">{pending ? "Saving…" : submitLabel}</button></form>;
+  return <form action={formAction} className="space-y-3"><ActionToast result={state} successMessage="Saved."/>{children}{state?.error && <p role="alert" aria-live="assertive" className="text-sm text-[var(--danger)]">{state.error}</p>}{state?.ok && <p role="status" aria-live="polite" className="text-sm text-[var(--success)]">Saved.</p>}<button disabled={pending} className="min-h-11 rounded-xl bg-[var(--strawberry)] px-4 py-2.5 text-sm font-semibold text-[var(--ink)] transition hover:shadow-[0_0_24px_color-mix(in_srgb,var(--strawberry),transparent_65%)] disabled:cursor-wait disabled:opacity-60">{pending ? "Saving…" : submitLabel}</button></form>;
 }
 
 export function Field({ label, name, type = "text", required = false, defaultValue, children }: { label: string; name: string; type?: string; required?: boolean; defaultValue?: string; children?: ReactNode }) {

@@ -791,3 +791,15 @@ pre, code { max-width: 100%; overflow-wrap: anywhere; }
 .landing-brand > .personna-brand-mark { border-color: #85A3B233; background: #0D1A2F; box-shadow: none; }
 .landing-footer-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
 .landing-footer-brand .landing-footer-kicker { margin: 0; }
+
+.toast-stack { position: fixed; z-index: 100; top: 76px; right: max(16px, env(safe-area-inset-right)); display: grid; width: min(390px, calc(100vw - 32px)); gap: 9px; pointer-events: none; }
+.app-toast { display: grid; grid-template-columns: 20px minmax(0, 1fr) 28px; align-items: center; gap: 10px; min-height: 56px; border: 1px solid var(--border-strong); border-radius: 11px; background: var(--surface-1); padding: 10px 11px; color: var(--tan); box-shadow: 0 14px 40px #0008; animation: toast-enter .18s ease-out both; pointer-events: auto; }
+.app-toast p { margin: 0; font-size: 12px; line-height: 1.45; }
+.app-toast-icon { display: grid; place-items: center; }
+.app-toast-success .app-toast-icon { color: var(--success); }
+.app-toast-error .app-toast-icon { color: var(--danger); }
+.app-toast-info .app-toast-icon { color: var(--strawberry); }
+.app-toast button { display: grid; width: 28px; height: 28px; place-items: center; border: 0; border-radius: 7px; background: transparent; color: var(--muted); cursor: pointer; }
+.app-toast button:hover { background: var(--surface-2); color: var(--tan); }
+@keyframes toast-enter { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) { .app-toast { animation: none; } }
