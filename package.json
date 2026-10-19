@@ -22,7 +22,6 @@
     "@fortawesome/free-solid-svg-icons": "^7.3.1",
     "@fortawesome/react-fontawesome": "^3.5.0",
     "@next/swc-wasm-nodejs": "15.5.28",
-    "@next/swc-win32-x64-msvc": "15.5.28",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-dropdown-menu": "^2.1.16",
     "@radix-ui/react-slot": "^1.2.3",
