@@ -13,19 +13,32 @@ export async function getDatabase(): Promise<Db> {
   if (isCloudflareWorker()) return getWorkerDatabase();
 
   const env = getEnvironment();
-  globalThis.personnaDatabase ??= (async () => {
-    const client = await (globalThis.personnaMongoClient ??= new MongoClient(env.MONGODB_URI, {
+  const clientPromise = globalThis.personnaMongoClient ??= new MongoClient(env.MONGODB_URI, {
       appName: "Personna",
       maxPoolSize: 20,
       serverSelectionTimeoutMS: 5_000,
       connectTimeoutMS: 10_000,
       socketTimeoutMS: 45_000,
-    }).connect());
+    }).connect();
+  const databasePromise = globalThis.personnaDatabase ??= clientPromise.then(async client => {
     const db = client.db(env.MONGODB_DB);
     await ensureIndexes(db);
     return db;
-  })();
-  return globalThis.personnaDatabase;
+  });
+
+  try {
+    return await databasePromise;
+  } catch (error) {
+    // Do not leave a rejected connection/index promise cached for the lifetime
+    // of the Node process. A transient Atlas/network failure can then recover
+    // on the next request instead of breaking every subsequent page load.
+    if (globalThis.personnaDatabase === databasePromise) globalThis.personnaDatabase = undefined;
+    if (globalThis.personnaMongoClient === clientPromise) {
+      globalThis.personnaMongoClient = undefined;
+      void clientPromise.then(client => client.close()).catch(() => undefined);
+    }
+    throw error;
+  }
 }
 
 export async function closeDatabase(): Promise<void> {
@@ -54,7 +67,8 @@ const getWorkerDatabase = cache(async (): Promise<Db> => {
   });
   await client.connect();
   const db = client.db(env.MONGODB_DB);
-  await ensureIndexes(db);
+  // Cloudflare creates a fresh client per invocation. Index creation is
+  // deployment/setup work (also performed by db:seed), not request work.
   return db;
 });
 
