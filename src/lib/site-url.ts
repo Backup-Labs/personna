@@ -1,11 +1,9 @@
 const LOCAL_SITE_URL = "http://localhost:3000";
+const PRODUCTION_SITE_URL = "https://personna.amaniishimwe36.workers.dev";
 
 export function getSiteUrl(): URL {
-  const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-  if (!configured) {
-    if (process.env.NODE_ENV === "development") return new URL(LOCAL_SITE_URL);
-    throw new Error("NEXT_PUBLIC_SITE_URL must be set to the public site origin for production builds.");
-  }
+  const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim()
+    || (process.env.NODE_ENV === "development" ? LOCAL_SITE_URL : PRODUCTION_SITE_URL);
 
   let url: URL;
   try {
