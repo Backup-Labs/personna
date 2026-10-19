@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
 import { RouteProgress } from "@/components/route-progress";
+import { getSiteUrl } from "@/lib/site-url";
 
 export const metadata: Metadata = {
   title: "Personna | Personal Operating System",
   description: "One system. Every responsibility. Meaningful progress.",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000")),
+  metadataBase: getSiteUrl(),
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {

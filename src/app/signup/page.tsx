@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { landingContent } from "@/content/landing";
 import { Activity, ArrowUpRight, CircleCheck, Sparkles } from "@/components/ui/icons";
+import { BrandMark } from "@/components/brand-mark";
 import { SignupForm } from "./signup-form";
 
 export const metadata = { title: "Create your account · Personna" };
@@ -13,7 +14,7 @@ export default async function SignupPage({ searchParams }: { searchParams: Promi
     <div aria-hidden="true" className="pointer-events-none absolute -left-44 top-[20%] size-[480px] rounded-full bg-[var(--strawberry)]/10 blur-[120px]"/>
     <div className="login-layout mx-auto grid min-h-dvh w-full max-w-[1920px] lg:grid-cols-[minmax(390px,.88fr)_minmax(0,1.12fr)]">
       <section className="relative z-10 flex min-w-0 flex-col justify-between gap-8 px-6 py-6 sm:px-10 lg:px-8 xl:px-14">
-        <Link href="/" aria-label="Personna home" className="inline-flex w-fit items-center gap-3 text-[var(--tan)]"><span className="grid size-9 place-items-center rounded-lg bg-[var(--surface-2)] text-[var(--strawberry)]"><Sparkles size={17}/></span><span className="text-xl font-extrabold tracking-[-.04em]">personna<span className="text-[var(--strawberry)]">.</span></span></Link>
+        <Link href="/" aria-label="Personna home" className="inline-flex w-fit items-center gap-3 text-[var(--tan)]"><BrandMark size="small"/><span className="text-xl font-extrabold tracking-[-.04em]">personna<span className="text-[var(--strawberry)]">.</span></span></Link>
         <div className="mx-auto w-full max-w-[420px] py-2">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/[.045] px-3 py-1.5 text-[10px] font-bold tracking-wide text-[#D7B7F4]"><span className="size-1.5 rounded-full bg-[var(--strawberry)]"/> YOUR PERSONAL OPERATING SYSTEM</div>
           <h1 className="text-[36px] font-extrabold leading-[1.03] tracking-[-.06em] text-white sm:text-[42px]">Make space for what matters<span className="text-[var(--strawberry)]">.</span></h1>

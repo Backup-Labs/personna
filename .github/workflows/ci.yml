@@ -12,7 +12,7 @@ jobs:
       MONGODB_URI: mongodb://127.0.0.1:27017
       MONGODB_DB: personna_ci
       AUTH_SECRET: personna-ci-only-secret-not-used-for-deployments-1234567890
-      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      NEXT_PUBLIC_SITE_URL: https://personna.example.invalid
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -23,4 +23,4 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm test
-      - run: npm run build
+      - run: npm run build:cloudflare

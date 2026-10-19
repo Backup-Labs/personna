@@ -1,7 +1,7 @@
 import { ObjectId, type Collection, type Filter } from "mongodb";
 import { hash } from "bcryptjs";
 import { loadEnvConfig } from "@next/env";
-import { getDatabase } from "@/lib/db";
+import { closeDatabase, getDatabase } from "@/lib/db";
 import { localDateKey, zonedDayRange } from "@/lib/dates";
 import { ensureIndexes } from "./indexes";
 import type { AccountDocument, BudgetDocument, CategoryDocument, DebtDocument, GoalDocument, HabitDocument, HabitLogDocument, LearningItemDocument, NoteDocument, ProjectDocument, ReviewDocument, SavingsGoalDocument, SettingsDocument, TaskDocument, TimeBlockDocument, TimeEntryDocument, TransactionDocument, UserDocument } from "./collections";
@@ -124,4 +124,7 @@ async function seed(): Promise<void> {
   await ensure(reviewCollection, { userId, type: "WEEKLY", period: weekKey, deletedAt: null }, { _id: new ObjectId(), userId, type: "WEEKLY", period: weekKey, wins: "Made room for focused work and a walk.", lessons: "A shorter task list made it easier to begin.", obstacles: "Too many small context switches.", nextFocus: "Protect two focused blocks and keep capture simple.", createdAt: now, updatedAt: now, deletedAt: null });
 }
 
-seed().then(() => console.log("Personna seed data is ready.")).catch((error: unknown) => { console.error("Personna seeding failed:", error); process.exitCode = 1; });
+seed()
+  .then(() => console.log("Personna seed data is ready."))
+  .catch((error: unknown) => { console.error("Personna seeding failed:", error); process.exitCode = 1; })
+  .finally(closeDatabase);

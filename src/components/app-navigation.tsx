@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { BookOpen, ChevronLeft, CircleDollarSign, Command, FolderKanban, Goal, Inbox, LayoutDashboard, ListTodo, NotebookPen, Settings2, Sparkles, Timer, type LucideIcon } from "@/components/ui/icons";
 import * as Dialog from "@radix-ui/react-dialog";
 import { QuickAddMenu } from "@/components/quick-add-menu";
+import { BrandMark } from "@/components/brand-mark";
 
 const groups: { label: string; items: { href: string; label: string; icon: LucideIcon }[] }[] = [
   { label: "Overview", items: [{ href: "/dashboard", label: "Dashboard", icon: LayoutDashboard }, { href: "/inbox", label: "Inbox", icon: Inbox }] },
@@ -36,8 +37,8 @@ export function AppNavigation({ variant }: { variant: "sidebar" | "mobile" }) {
 
   if (variant === "sidebar") return <>
     <div className={`mb-7 flex items-center ${collapsed ? "justify-center" : "justify-between"}`}>
-      {!collapsed && <Link href="/dashboard" aria-label="Personna home" className="flex min-w-0 items-center gap-3 px-2"><span className="brand-mark"><Sparkles size={17} strokeWidth={1.7}/></span><span className="font-display text-xl font-semibold tracking-tight">personna<span className="text-[var(--strawberry)]">.</span></span></Link>}
-      {collapsed && <Link href="/dashboard" aria-label="Personna home" className="brand-mark"><Sparkles size={17} strokeWidth={1.7}/></Link>}
+      {!collapsed && <Link href="/dashboard" aria-label="Personna home" className="flex min-w-0 items-center gap-3 px-2"><BrandMark/><span className="font-display text-xl font-semibold tracking-tight">personna<span className="text-[var(--strawberry)]">.</span></span></Link>}
+      {collapsed && <Link href="/dashboard" aria-label="Personna home" className="brand-mark"><BrandMark/></Link>}
       <button type="button" onClick={() => setCollapsed(current => { const next = !current; window.localStorage.setItem("personna.sidebar-collapsed", String(next)); document.documentElement.style.setProperty("--sidebar-width", next ? "76px" : "260px"); return next; })} className="icon-button size-9 shrink-0" aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"} title="Toggle sidebar ([)"><ChevronLeft size={16} className={collapsed ? "rotate-180" : ""}/></button>
     </div>
     <nav aria-label="Main navigation" className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto">

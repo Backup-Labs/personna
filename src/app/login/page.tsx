@@ -1,4 +1,5 @@
-import { Activity, ArrowUpRight, CircleCheck, Sparkles } from "@/components/ui/icons";
+import { Activity, ArrowUpRight, CircleCheck } from "@/components/ui/icons";
+import { BrandMark } from "@/components/brand-mark";
 import Link from "next/link";
 import { LoginForm } from "./login-form";
 
@@ -10,7 +11,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
     <div aria-hidden="true" className="pointer-events-none absolute -left-44 top-[20%] size-[480px] rounded-full bg-[var(--strawberry)]/10 blur-[120px]"/>
     <div className="login-layout mx-auto grid h-full w-full max-w-[1920px] lg:grid-cols-[minmax(390px,.88fr)_minmax(0,1.12fr)]">
       <section className="login-column relative z-10 flex h-full min-h-0 flex-col justify-between px-6 py-5 sm:px-10 lg:px-8 xl:px-14">
-        <a href="/login" aria-label="Personna sign in" className="inline-flex w-fit items-center gap-3 text-[var(--tan)]"><span className="grid size-9 place-items-center rounded-lg bg-[var(--surface-2)] text-[var(--strawberry)]"><Sparkles size={17}/></span><span className="text-xl font-extrabold tracking-[-.04em]">personna<span className="text-[var(--strawberry)]">.</span></span></a>
+        <a href="/login" aria-label="Personna sign in" className="inline-flex w-fit items-center gap-3 text-[var(--tan)]"><BrandMark size="small"/><span className="text-xl font-extrabold tracking-[-.04em]">personna<span className="text-[var(--strawberry)]">.</span></span></a>
         <div className="login-content mx-auto w-full max-w-[420px] py-4">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/[.045] px-3 py-1.5 text-[10px] font-bold tracking-wide text-[#D7B7F4]"><span className="size-1.5 rounded-full bg-[var(--strawberry)] shadow-[0_0_10px_var(--strawberry)]"/> YOUR PERSONAL OPERATING SYSTEM</div>
           <h1 className="max-w-[10ch] text-[38px] font-extrabold leading-[1.03] tracking-[-.06em] text-white sm:text-[44px]">Welcome back<span className="text-[var(--strawberry)]">.</span></h1>

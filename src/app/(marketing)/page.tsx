@@ -50,7 +50,9 @@ export default function MarketingPage() {
   return <div id="top" className="landing-page">
     <LandingNavbar/>
     <main id="main-content">
-      <HeroSection/><ProblemSection/><ModulesSection/><WorkflowSection/><MomoShowcase/><ProfitabilityShowcase/><AiShowcase/><ProgressShowcase/><AudienceSection/><PricingSection/><FaqSection/><FinalCta/>
+      <HeroSection/><ProblemSection/><ModulesSection/><WorkflowSection/><MomoShowcase/><ProfitabilityShowcase/><AiShowcase/><ProgressShowcase/><AudienceSection/>
+      <section className="landing-manifesto" aria-label="The Personna approach"><div className="landing-container"><span className="landing-manifesto-mark" aria-hidden="true">“</span><p>Make space for what matters.<br/><span>Keep every decision in your hands.</span></p><span className="landing-manifesto-caption">THE PERSONNA APPROACH</span></div></section>
+      <PricingSection/><FaqSection/><FinalCta/>
     </main>
     <LandingFooter/><LandingAnalytics/>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareApplication).replace(/</g, "\\u003c") }}/>

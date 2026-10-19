@@ -7,7 +7,7 @@ export function PricingSection() {
   const content = landingContent.pricing;
   return <section id="pricing" className="landing-section landing-container relative" aria-labelledby="pricing-title">
     <GlowOrb className="landing-pricing-orb"/>
-    <div className="landing-section-heading landing-centered-heading"><SectionLabel>{content.eyebrow}</SectionLabel><h2 id="pricing-title">{content.title}</h2></div>
+    <div className="landing-section-heading landing-pricing-heading"><SectionLabel>{content.eyebrow}</SectionLabel><h2 id="pricing-title">{content.title}</h2></div>
     <PricingWidget content={content}/>
     <p className="landing-pricing-student">{content.studentDiscount}</p>
     <p className="landing-pricing-note">{content.note} {content.currencyNote}</p>
