@@ -86,19 +86,19 @@ export function ProjectBoard({ projects, goals, activeLimit }: { projects: Proje
   }
 
   return <div>
-    <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-      <label className="relative block w-full max-w-sm">
+    <div className="mb-5 flex flex-wrap items-end justify-between gap-4 sm:gap-5">
+      <label className="project-search relative block w-full min-w-0 flex-1 sm:max-w-md">
         <span className="sr-only">Search projects</span><Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]"/>
-        <input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Search projects or tasks" className="form-control pl-9"/>
+        <input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Search projects or tasks" className="form-control project-search-input"/>
       </label>
-      <div className="flex items-center gap-2">
+      <div className="flex shrink-0 items-center gap-3">
         <span className="text-xs text-[var(--muted)]">Sort</span>
         <div className="min-w-44"><CustomSelect name="projectSort" defaultValue="updated" onValueChange={value => setSort(value as typeof sort)}><option value="updated">Recently updated</option><option value="deadline">Deadline</option><option value="priority">Priority</option><option value="name">Name</option></CustomSelect></div>
       </div>
     </div>
     <p className="mb-3 text-xs text-[var(--muted)]">Drag a project to change its status. Use Edit for keyboard accessible status changes. {projects.length} projects · {activeLimit} active project limit.</p>
     {message && <p className="mb-3 text-xs text-[var(--muted)]" role="status" aria-live="polite">{message}</p>}
-    <div className="grid grid-flow-col auto-cols-[minmax(250px,84vw)] gap-3 overflow-x-auto pb-4 sm:auto-cols-[minmax(260px,1fr)] lg:grid-flow-row lg:grid-cols-5 lg:auto-cols-auto lg:overflow-visible">
+    <div className="grid grid-flow-col auto-cols-[minmax(250px,84vw)] gap-4 overflow-x-auto pb-4 sm:auto-cols-[minmax(280px,1fr)] lg:grid-flow-row lg:grid-cols-2 lg:auto-cols-auto lg:overflow-visible xl:grid-cols-3 2xl:grid-cols-5">
       {columns.map(({ status, label, Icon }) => {
         const items = visibleProjects.filter(project => project.status === status);
         const isOver = dragOver === status;

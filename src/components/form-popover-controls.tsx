@@ -8,13 +8,14 @@ export function FormPopoverControls() {
   const [panels, setPanels] = useState<HTMLElement[]>([]);
 
   useEffect(() => {
-    const formPopoverSelector = "details[open]:has(> div.absolute form):not(:has(> summary[aria-label='Account menu']))";
+    const formPopoverSelector = "details[open]:has(form):not(:has(> summary[aria-label='Account menu']))";
     const openPopoverSelector = `${formPopoverSelector}, details[open]:has(> summary[aria-label='Account menu'])`;
     const refresh = () => {
       const next = Array.from(document.querySelectorAll<HTMLDetailsElement>(formPopoverSelector))
         .map(details => details.querySelector<HTMLElement>(":scope > div"))
         .filter((panel): panel is HTMLElement => Boolean(panel));
       for (const panel of next) panel.classList.add("form-popover-panel");
+      document.documentElement.classList.toggle("has-open-form-popover", next.length > 0);
       setPanels(current => current.length === next.length && current.every((panel, index) => panel === next[index]) ? current : next);
     };
     const observer = new MutationObserver(refresh);
@@ -25,6 +26,7 @@ export function FormPopoverControls() {
     refresh();
     return () => {
       observer.disconnect();
+      document.documentElement.classList.remove("has-open-form-popover");
       document.removeEventListener("toggle", refresh, true);
       document.removeEventListener("pointerdown", onPointerDown, true);
       document.removeEventListener("keydown", onKeyDown, true);
@@ -50,15 +52,25 @@ export function FormPopoverControls() {
     }
   }, []);
 
-  return <>{panels.map((panel, index) => createPortal(
-    <button key="close" type="button" className="form-popover-close icon-button size-8" aria-label="Close form" title="Close" onClick={() => {
-      const details = panel.parentElement;
-      if (details instanceof HTMLDetailsElement) {
-        details.open = false;
-        details.querySelector<HTMLElement>(":scope > summary")?.focus();
-      }
-    }}><X size={16}/></button>,
-    panel,
-    `form-popover-${index}`,
-  ))}</>;
+  if (typeof document === "undefined") return null;
+  const closeAll = () => {
+    const open = Array.from(document.querySelectorAll<HTMLDetailsElement>("details[open]:has(form):not(:has(> summary[aria-label='Account menu']))"));
+    for (const details of open) details.open = false;
+    open.at(-1)?.querySelector<HTMLElement>(":scope > summary")?.focus();
+  };
+
+  return <>
+    {panels.length > 0 && createPortal(<button type="button" aria-label="Close dialog" className="form-popover-backdrop" onClick={closeAll}/>, document.body)}
+    {panels.map((panel, index) => createPortal(
+      <button key="close" type="button" className="form-popover-close icon-button size-8" aria-label="Close form" title="Close" onClick={() => {
+        const details = panel.parentElement;
+        if (details instanceof HTMLDetailsElement) {
+          details.open = false;
+          details.querySelector<HTMLElement>(":scope > summary")?.focus();
+        }
+      }}><X size={16}/></button>,
+      panel,
+      `form-popover-${index}`,
+    ))}
+  </>;
 }
