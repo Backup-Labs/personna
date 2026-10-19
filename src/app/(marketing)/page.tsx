@@ -58,3 +58,4 @@ export default function MarketingPage() {
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareApplication).replace(/</g, "\\u003c") }}/>
   </div>;
 }
+
