@@ -803,3 +803,20 @@ pre, code { max-width: 100%; overflow-wrap: anywhere; }
 .app-toast button:hover { background: var(--surface-2); color: var(--tan); }
 @keyframes toast-enter { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
 @media (prefers-reduced-motion: reduce) { .app-toast { animation: none; } }
+@media (max-width: 767px) {
+  html:has(.login-shell), body:has(.login-shell), html:has(.signup-shell), body:has(.signup-shell) { height: auto; min-height: 100svh; overflow-x: clip; overflow-y: auto; }
+  .page-heading > div { min-width: 0; }
+  .page-heading > :last-child { max-width: 100%; }
+  .settings-section-nav { display: flex; gap: 4px; overflow-x: auto; overscroll-behavior-x: contain; }
+  .settings-section-nav a { flex: 0 0 auto; min-height: 40px; padding-inline: 11px; white-space: nowrap; }
+  .login-shell, .signup-shell { height: auto !important; min-height: 100svh !important; overflow-y: auto !important; }
+  .login-art, .signup-art { display: none !important; }
+  .login-layout { min-height: 100svh; grid-template-columns: minmax(0, 1fr); }
+  .login-column { min-height: 100svh; justify-content: flex-start; }
+}
+@media (max-width: 420px) {
+  .page-heading > :last-child a, .page-heading > :last-child button { min-height: 42px; }
+  .toast-stack { top: 66px; right: 10px; width: calc(100vw - 20px); }
+  .mobile-tabs { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .custom-picker [role="dialog"], .custom-picker [role="listbox"] { max-width: calc(100vw - 24px); }
+}

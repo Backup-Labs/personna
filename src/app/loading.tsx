@@ -1,6 +1,5 @@
-import { PageSkeleton } from "@/components/ui/skeleton";
-import { AppShell } from "@/components/app-shell";
+import { WorkspaceSkeleton } from "@/components/ui/skeleton";
 
 export default function Loading() {
-  return <AppShell><div aria-busy="true" className="mx-auto max-w-[1440px]"><PageSkeleton/></div></AppShell>;
+  return <WorkspaceSkeleton kind="dashboard"/>;
 }
