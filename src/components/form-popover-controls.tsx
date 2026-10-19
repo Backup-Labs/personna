@@ -8,8 +8,10 @@ export function FormPopoverControls() {
   const [panels, setPanels] = useState<HTMLElement[]>([]);
 
   useEffect(() => {
+    const formPopoverSelector = "details[open]:has(> div.absolute form):not(:has(> summary[aria-label='Account menu']))";
+    const openPopoverSelector = `${formPopoverSelector}, details[open]:has(> summary[aria-label='Account menu'])`;
     const refresh = () => {
-      const next = Array.from(document.querySelectorAll<HTMLDetailsElement>("details[open]:has(form):not(:has(> summary[aria-label='Account menu']))"))
+      const next = Array.from(document.querySelectorAll<HTMLDetailsElement>(formPopoverSelector))
         .map(details => details.querySelector<HTMLElement>(":scope > div"))
         .filter((panel): panel is HTMLElement => Boolean(panel));
       for (const panel of next) panel.classList.add("form-popover-panel");
@@ -29,19 +31,19 @@ export function FormPopoverControls() {
     };
 
     function closeOpenPopovers(focus: boolean) {
-      const open = Array.from(document.querySelectorAll<HTMLDetailsElement>("details[open]:has(form):not(:has(> summary[aria-label='Account menu'])), details[open]:has(> summary[aria-label='Account menu'])"));
+      const open = Array.from(document.querySelectorAll<HTMLDetailsElement>(openPopoverSelector));
       for (const details of open) details.open = false;
       if (focus) open.at(-1)?.querySelector<HTMLElement>(":scope > summary")?.focus();
     }
     function onPointerDown(event: PointerEvent) {
       const target = event.target;
       if (!(target instanceof Node)) return;
-      for (const details of document.querySelectorAll<HTMLDetailsElement>("details[open]:has(form), details[open]:has(> summary[aria-label='Account menu'])")) {
+      for (const details of document.querySelectorAll<HTMLDetailsElement>(openPopoverSelector)) {
         if (!details.contains(target)) details.open = false;
       }
     }
     function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape" && document.querySelector("details[open]:has(form), details[open]:has(> summary[aria-label='Account menu'])")) {
+      if (event.key === "Escape" && document.querySelector(openPopoverSelector)) {
         event.preventDefault();
         closeOpenPopovers(true);
       }
