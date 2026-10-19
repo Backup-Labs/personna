@@ -72,10 +72,13 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .icon-button { display: grid; width: 38px; height: 38px; place-items: center; border: 1px solid var(--border-strong); border-radius: 12px; background: var(--surface-1); color: var(--tan); }
 .command-button { display: flex; height: 40px; align-items: center; gap: 10px; border: 1px solid var(--border-strong); border-radius: 12px; background: var(--surface-1); padding: 0 12px; color: var(--muted); font-size: 12px; }
 .command-button kbd { display: flex; align-items: center; gap: 3px; margin-left: 32px; border: 1px solid var(--border-strong); border-radius: 6px; padding: 3px 5px; font: inherit; font-size: 10px; }
-.form-control { display: block; width: 100%; margin-top: 6px; border: 1px solid var(--border); border-radius: 7px; background: var(--ink); padding: 11px 12px; color: var(--tan); font: inherit; font-size: 14px; transition: border-color 150ms ease, box-shadow 150ms ease; }
+.form-control { width: 100%; margin-top: 6px; border: 1px solid var(--border); border-radius: 7px; background: var(--ink); padding: 11px 12px; color: var(--tan); font: inherit; font-size: 14px; transition: border-color 150ms ease, box-shadow 150ms ease; }
+.form-control:not(button) { display: block; }
 .form-control:hover { border-color: var(--border-strong); }
 .form-control:focus { border-color: var(--strawberry); outline: 0; box-shadow: 0 0 0 3px color-mix(in srgb, var(--strawberry), transparent 84%); }
 .form-control::placeholder { color: color-mix(in srgb, var(--muted), transparent 18%); }
+.form-popover-panel { position: relative; }
+.form-popover-close { position: absolute; top: 8px; right: 8px; z-index: 2; cursor: pointer; }
 input[type="number"].form-control { font-family: var(--font-space), sans-serif; font-size: 1.15rem; font-weight: 600; font-variant-numeric: tabular-nums; }
 input[type="date"], input[type="datetime-local"], input[type="month"], input[type="time"] { color-scheme: dark; }
 .surface { box-shadow: 0 12px 30px color-mix(in srgb, var(--ink), transparent 65%); transition: border-color 180ms ease, transform 180ms ease; }
@@ -93,6 +96,15 @@ input[type="date"], input[type="datetime-local"], input[type="month"], input[typ
 @media (min-width: 1024px) { .app-content { margin-left: var(--sidebar-width, 260px); } }
 @media (max-width: 767px) { .app-topbar { height: 60px; } .page-heading { align-items: flex-start; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; } }
+
+/* Keep icons visually separated from button labels across the app and marketing pages. */
+button:has(> svg):not(.icon-button):not([aria-label]),
+a:has(> svg):not([aria-label]),
+summary:has(> svg):not(.icon-button):not([aria-label]) {
+  display: inline-flex;
+  align-items: center;
+  column-gap: .55rem;
+}
 
 /* Compact geometry, accessible controls, and a single dark appearance. */
 .surface, .surface-featured, .form-control, .icon-button, .topbar-icon, .command-button { border-radius: 7px !important; }

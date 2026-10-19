@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { AppNavigation } from "@/components/app-navigation";
 import { AppTopbar } from "@/components/app-topbar";
 import { Card } from "@/components/ui/card";
+import { FormPopoverControls } from "@/components/form-popover-controls";
 
 export function AppShell({ children }: { children: ReactNode }) {
   return <div className="app-frame min-h-screen">
@@ -9,6 +10,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     <aside className="app-sidebar fixed inset-y-0 left-0 z-30 hidden flex-col border-r border-[var(--border-strong)] bg-[var(--surface-1)] px-3 py-5 lg:flex"><AppNavigation variant="sidebar"/></aside>
     <div className="app-content min-h-screen"><AppTopbar/><main id="main-content" className="mx-auto w-full max-w-[1880px] px-4 pb-28 pt-6 sm:px-6 lg:px-8 lg:pb-10 lg:pt-8">{children}</main></div>
     <AppNavigation variant="mobile"/>
+    <FormPopoverControls/>
   </div>;
 }
 
