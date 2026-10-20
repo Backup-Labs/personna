@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { landingContent } from "@/content/landing";
+import { pricing } from "@/content/pricing";
 import { LandingAnalytics } from "@/components/landing/analytics";
 import { AiShowcase } from "@/components/landing/ai-showcase";
 import { AudienceSection } from "@/components/landing/audience";
@@ -36,14 +37,10 @@ const softwareApplication = {
   applicationCategory: "ProductivityApplication",
   operatingSystem: "Web",
   description: landingContent.metadata.description,
-  offers: landingContent.pricing.plans.map(plan => ({
-    "@type": "Offer",
-    name: plan.name,
-    price: plan.annualTotal,
-    priceCurrency: "USD",
-    category: "Early access indicative pricing",
-    availability: "https://schema.org/PreOrder",
-  })),
+  offers: pricing.plans.flatMap(plan => [
+    { "@type": "Offer", name: `${plan.name} Monthly`, price: plan.monthly, priceCurrency: "USD" },
+    ...(plan.id === "starter" ? [] : [{ "@type": "Offer", name: `${plan.name} Annual`, price: plan.annualTotal, priceCurrency: "USD" }]),
+  ]),
 };
 
 export default function MarketingPage() {

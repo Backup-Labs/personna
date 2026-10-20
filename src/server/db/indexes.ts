@@ -33,6 +33,8 @@ const indexes: Record<string, IndexDescription[]> = {
   learningItems: [{ key: { userId: 1, status: 1, updatedAt: -1 }, name: "user_learning_status" }],
   reviews: [{ key: { userId: 1, type: 1, period: 1 }, unique: true, name: "user_review_period" }],
   authAttempts: [{ key: { expiresAt: 1 }, expireAfterSeconds: 0, name: "auth_attempts_ttl" }],
+  waitlistEntries: [{ key: { email: 1 }, unique: true, name: "waitlist_email_unique" }],
+  waitlistRateLimits: [{ key: { expiresAt: 1 }, expireAfterSeconds: 0, name: "waitlist_rate_limits_ttl" }],
 };
 
 export async function ensureIndexes(db: Db): Promise<void> {

@@ -10,6 +10,13 @@ export type UserDocument = {
   deletedAt: Date | null;
 };
 
+export type WaitlistEntryDocument = {
+  _id?: ObjectId;
+  email: string;
+  businessType: string;
+  createdAt: Date;
+};
+
 export type SettingsDocument = {
   _id?: ObjectId;
   userId: ObjectId;

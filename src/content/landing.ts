@@ -9,18 +9,7 @@ export const landingContent = {
     signIn: "Sign in",
     startFree: "Start free",
     close: "Close",
-    comparePlans: "Compare plan features",
-    included: "Included",
-    starter: "Starter",
-    pro: "Pro",
-    studio: "Studio",
     backToTop: "Back to top ↑",
-    unavailable: "Not included",
-    free: "Free",
-    perMonth: "/ month",
-    billedYearlySuffix: "billed yearly",
-    chooseBilling: "Choose billing frequency",
-    notIncludedSymbol: "—",
   },
   metadata: {
     title: "Personna — Your whole life, in one system",
@@ -37,7 +26,7 @@ export const landingContent = {
     eyebrow: "One system. Every responsibility.",
     title: "Run your whole life from one operating system.",
     description: "Tasks, projects, money, time, learning, notes, and goals in one connected workspace, with an AI assistant that can work from the data you choose to share.",
-    note: "Free forever plan · No bank connection needed · RWF + USD",
+    note: "Free forever · Pro from $7/month · No bank connection needed",
     sampleLabel: "Sample data",
     trust: ["Private by default", "Your data stays yours"],
     mock: {
@@ -163,39 +152,6 @@ export const landingContent = {
       { icon: "growth", title: "Young professionals", text: "Build routines and make room for growth beyond your calendar." },
     ],
   },
-  pricing: {
-    eyebrow: "Simple plans",
-    title: "Start free. Pay when it pays you back.",
-    annualLabel: "Annual · 2 months free",
-    monthlyLabel: "Monthly",
-    note: "Illustrative early-access pricing. Payments and paid plans are not enabled in this build.",
-    currencyNote: "Approximate local prices are shown for planning. Pay with card or mobile money when billing is available.",
-    studentDiscount: "Students get Pro at half price with a valid school email, when paid plans launch.",
-    plans: [
-      {
-        id: "starter", name: "Starter", badge: "", monthly: 0, annual: 0, annualTotal: 0, local: "Free forever", audience: "Getting organized",
-        description: "A thoughtful home for the essentials.", cta: "Start free", featured: false, features: ["Tasks and notes", "Up to 3 active projects", "Manual finance tracking", "Habits and daily check-in", "10 AI messages each month"],
-      },
-      {
-        id: "pro", name: "Pro", badge: "Most popular", monthly: 9, annual: 7.5, annualTotal: 90, local: "About RWF 13,000 / month", audience: "Serious personal productivity",
-        description: "More room to connect your whole system.", cta: "Go Pro", featured: true, features: ["Everything in Starter", "Unlimited projects and notes", "MoMo and Airtel SMS import", "Time blocking, timer, and reports", "AI assistant and weekly debrief", "Data export and automatic backups"],
-      },
-      {
-        id: "studio", name: "Studio", badge: "", monthly: 19, annual: 15.83, annualTotal: 190, local: "About RWF 27,000 / month", audience: "Freelancers and small businesses",
-        description: "A clearer view of client work and money.", cta: "Go Studio", featured: false, features: ["Everything in Pro", "Project profitability and hourly rate", "Invoices and client tracking", "Multi-currency reports", "Priority AI and support"],
-      },
-    ],
-    comparison: [
-      { feature: "Tasks, notes, goals, and habits", starter: true, pro: true, studio: true },
-      { feature: "Active projects", starter: "3", pro: "Unlimited", studio: "Unlimited" },
-      { feature: "Finance and MoMo imports", starter: "Manual", pro: "Included", studio: "Included" },
-      { feature: "Time reports and AI debrief", starter: "Limited AI", pro: "Included", studio: "Priority" },
-      { feature: "Project profitability and client tools", starter: false, pro: false, studio: true },
-    ],
-    comparisonHeadings: ["Starter", "Pro", "Studio"],
-    compareLabel: "Compare plan features",
-    includedLabel: "Included",
-  },
   faq: {
     eyebrow: "Good to know",
     title: "Questions, answered.",
@@ -224,6 +180,3 @@ export const landingContent = {
     backToTop: "Back to top ↑",
   },
 } as const;
-
-export type BillingPeriod = "monthly" | "annual";
-export type PlanId = (typeof landingContent.pricing.plans)[number]["id"];

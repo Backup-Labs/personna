@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { landingContent } from "@/content/landing";
+import { pricing } from "@/content/pricing";
 import { Activity, ArrowUpRight, CircleCheck, Sparkles } from "@/components/ui/icons";
 import { BrandMark } from "@/components/brand-mark";
 import { SignupForm } from "./signup-form";
@@ -8,7 +8,9 @@ export const metadata = { title: "Create your account · Personna" };
 
 export default async function SignupPage({ searchParams }: { searchParams: Promise<{ plan?: string; billing?: string }> }) {
   const params = await searchParams;
-  const selectedPlan = landingContent.pricing.plans.find(plan => plan.id === params.plan);
+  const selectedPlan = params.plan === "business" && pricing.businessAvailable
+    ? pricing.business
+    : pricing.plans.find(plan => plan.id === params.plan);
   const billing = params.billing === "monthly" ? "monthly" : "annual";
   return <main className="signup-shell grain relative isolate min-h-dvh overflow-hidden">
     <div aria-hidden="true" className="pointer-events-none absolute -left-44 top-[20%] size-[480px] rounded-full bg-[var(--strawberry)]/10 blur-[120px]"/>
