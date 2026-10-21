@@ -76,7 +76,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .custom-picker-date-input { width: auto; min-width: 0; flex: 1 1 0%; }
 .custom-picker-time-input { width: 6.5rem; min-width: 6.5rem; flex: 0 0 6.5rem; }
 .custom-picker-time-input[data-time-only="true"] { width: auto; min-width: 0; flex: 1 1 0%; }
-.project-search-input { min-height: 44px; margin-top: 0; padding-left: 40px; }
+.project-search-input,
+.search-input { min-height: 44px; margin-top: 0 !important; padding-left: 40px !important; }
 .form-control:not(button) { display: block; }
 .form-control:hover { border-color: var(--border-strong); }
 .form-control:focus { border-color: var(--strawberry); outline: 0; box-shadow: 0 0 0 3px color-mix(in srgb, var(--strawberry), transparent 84%); }
@@ -104,12 +105,24 @@ input[type="date"], input[type="datetime-local"], input[type="month"], input[typ
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; } }
 
 /* Keep icons visually separated from button labels across the app and marketing pages. */
-button:has(> svg):not(.icon-button):not([aria-label]),
-a:has(> svg):not([aria-label]),
-summary:has(> svg):not(.icon-button):not([aria-label]) {
+button:has(> svg):not(.icon-button):not([aria-label]):not(:empty),
+a:has(> svg):not([aria-label]):not(:empty),
+summary:has(> svg):not(.icon-button):not([aria-label]):not(:empty) {
   display: inline-flex;
   align-items: center;
   column-gap: .55rem;
+}
+
+.icon-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  padding: 0 !important;
+}
+.icon-button > svg {
+  margin: auto !important;
+  display: block !important;
 }
 
 /* Compact geometry, accessible controls, and a single dark appearance. */
@@ -826,14 +839,25 @@ pre, code { max-width: 100%; overflow-wrap: anywhere; }
 .landing-footer-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
 .landing-footer-brand .landing-footer-kicker { margin: 0; }
 
-.toast-stack { position: fixed; z-index: 100; top: 76px; right: max(16px, env(safe-area-inset-right)); display: grid; width: min(390px, calc(100vw - 32px)); gap: 9px; pointer-events: none; }
-.app-toast { display: grid; grid-template-columns: 20px minmax(0, 1fr) 28px; align-items: center; gap: 10px; min-height: 56px; border: 1px solid var(--border-strong); border-radius: 11px; background: var(--surface-1); padding: 10px 11px; color: var(--tan); box-shadow: 0 14px 40px #0008; animation: toast-enter .18s ease-out both; pointer-events: auto; }
-.app-toast p { margin: 0; font-size: 12px; line-height: 1.45; }
-.app-toast-icon { display: grid; place-items: center; }
-.app-toast-success .app-toast-icon { color: var(--success); }
-.app-toast-error .app-toast-icon { color: var(--danger); }
-.app-toast-info .app-toast-icon { color: var(--strawberry); }
-.app-toast button { display: grid; width: 28px; height: 28px; place-items: center; border: 0; border-radius: 7px; background: transparent; color: var(--muted); cursor: pointer; }
+.toast-stack { position: fixed; z-index: 100; top: 76px; right: max(16px, env(safe-area-inset-right)); display: grid; width: min(390px, calc(100vw - 32px)); gap: 10px; pointer-events: none; }
+.app-toast { display: grid; grid-template-columns: 22px minmax(0, 1fr) 28px; align-items: start; gap: 11px; min-height: 56px; border: 1px solid var(--border-strong); border-radius: 12px; background: var(--surface-1); padding: 11px 13px; color: var(--tan); box-shadow: 0 16px 42px #000a; animation: toast-enter .2s cubic-bezier(0.16, 1, 0.3, 1) both; pointer-events: auto; }
+.app-toast-title { margin: 0 0 2px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1.3; }
+.app-toast-message { margin: 0; font-size: 12px; line-height: 1.45; color: var(--tan); }
+.app-toast-icon { display: grid; place-items: center; margin-top: 2px; }
+
+.app-toast-success { border-color: color-mix(in srgb, var(--success), transparent 55%); background: linear-gradient(135deg, color-mix(in srgb, var(--success), transparent 92%), var(--surface-1) 40%); box-shadow: 0 16px 42px #000a, 0 0 20px color-mix(in srgb, var(--success), transparent 85%); }
+.app-toast-success .app-toast-icon, .app-toast-success .app-toast-title { color: var(--success); }
+
+.app-toast-error { border-color: color-mix(in srgb, var(--danger), transparent 45%); background: linear-gradient(135deg, color-mix(in srgb, var(--danger), transparent 90%), var(--surface-1) 40%); box-shadow: 0 16px 42px #000a, 0 0 20px color-mix(in srgb, var(--danger), transparent 85%); }
+.app-toast-error .app-toast-icon, .app-toast-error .app-toast-title { color: var(--danger); }
+
+.app-toast-warning { border-color: color-mix(in srgb, var(--warning), transparent 45%); background: linear-gradient(135deg, color-mix(in srgb, var(--warning), transparent 90%), var(--surface-1) 40%); box-shadow: 0 16px 42px #000a, 0 0 20px color-mix(in srgb, var(--warning), transparent 85%); }
+.app-toast-warning .app-toast-icon, .app-toast-warning .app-toast-title { color: var(--warning); }
+
+.app-toast-info { border-color: color-mix(in srgb, var(--strawberry), transparent 55%); background: linear-gradient(135deg, color-mix(in srgb, var(--strawberry), transparent 92%), var(--surface-1) 40%); box-shadow: 0 16px 42px #000a, 0 0 20px color-mix(in srgb, var(--strawberry), transparent 85%); }
+.app-toast-info .app-toast-icon, .app-toast-info .app-toast-title { color: var(--strawberry); }
+
+.app-toast button { display: grid; width: 28px; height: 28px; place-items: center; border: 0; border-radius: 7px; background: transparent; color: var(--muted); cursor: pointer; transition: background 150ms ease, color 150ms ease; }
 .app-toast button:hover { background: var(--surface-2); color: var(--tan); }
 @keyframes toast-enter { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
 @media (prefers-reduced-motion: reduce) { .app-toast { animation: none; } }

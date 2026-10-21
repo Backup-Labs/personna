@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useActionState, useEffect, useMemo, useState, useTransition } from "react";
-import { Check, CircleDashed, Flag, Grip, Lightbulb, PauseCircle, PlayCircle, Search, Trash, Edit3 } from "@/components/ui/icons";
+import { useActionState, useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { AlertTriangle, Check, CircleDashed, Flag, Grip, Lightbulb, PauseCircle, PlayCircle, Search, Trash, Edit3 } from "@/components/ui/icons";
 import { CustomSelect, Field } from "@/components/action-form";
 import { ProjectNextAction } from "@/components/project-next-action";
 import { ProjectStatusButton } from "@/components/project-status-button";
@@ -88,8 +88,9 @@ export function ProjectBoard({ projects, goals, activeLimit }: { projects: Proje
   return <div>
     <div className="mb-5 flex flex-wrap items-end justify-between gap-4 sm:gap-5">
       <label className="project-search relative block w-full min-w-0 flex-1 sm:max-w-md">
-        <span className="sr-only">Search projects</span><Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]"/>
-        <input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Search projects or tasks" className="form-control project-search-input"/>
+        <span className="sr-only">Search projects</span>
+        <Search size={15} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)]"/>
+        <input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Search projects or tasks" className="form-control project-search-input !mt-0 !pl-10"/>
       </label>
       <div className="flex shrink-0 items-center gap-3">
         <span className="text-xs text-[var(--muted)]">Sort</span>
@@ -98,7 +99,7 @@ export function ProjectBoard({ projects, goals, activeLimit }: { projects: Proje
     </div>
     <p className="mb-3 text-xs text-[var(--muted)]">Drag a project to change its status. Use Edit for keyboard accessible status changes. {projects.length} projects · {activeLimit} active project limit.</p>
     {message && <p className="mb-3 text-xs text-[var(--muted)]" role="status" aria-live="polite">{message}</p>}
-    <div className="grid grid-flow-col auto-cols-[minmax(250px,84vw)] gap-4 overflow-x-auto pb-4 sm:auto-cols-[minmax(280px,1fr)] lg:grid-flow-row lg:grid-cols-2 lg:auto-cols-auto lg:overflow-visible xl:grid-cols-3 2xl:grid-cols-5">
+    <div className="grid grid-flow-col auto-cols-[minmax(280px,1fr)] gap-4 overflow-x-auto pb-4 items-start xl:grid-cols-5 xl:auto-cols-fr xl:overflow-visible">
       {columns.map(({ status, label, Icon }) => {
         const items = visibleProjects.filter(project => project.status === status);
         const isOver = dragOver === status;
@@ -139,13 +140,34 @@ function ProjectCard({ project, goals, pending, onMove, onDragStart, onDragEnd }
 
 function ProjectEditForm({ project, goals }: { project: ProjectCardData; goals: GoalChoice[] }) {
   const [state, action, pending] = useActionState(async (_previous: Result, form: FormData) => updateProjectAction(project.id, form), null);
-  return <form action={action} className="space-y-3">
+  const formRef = useRef<HTMLFormElement | null>(null);
+
+  useEffect(() => {
+    if (state?.ok) {
+      const details = formRef.current?.closest("details");
+      if (details) details.open = false;
+    }
+  }, [state]);
+
+  return <form ref={formRef} action={action} className="space-y-3">
     <Field label="Project name" name="title" required defaultValue={project.title}/>
     <Field label="Status" name="status" required defaultValue={project.status}><select name="status" defaultValue={project.status}><option value="IDEA">Backlog</option><option value="PLANNED">Planned</option><option value="ACTIVE">Active</option><option value="PAUSED">Paused</option><option value="COMPLETED">Completed</option></select></Field>
     <Field label="Priority" name="priority" required defaultValue={project.priority}><select name="priority" defaultValue={project.priority}><option value="HIGH">High</option><option value="MEDIUM">Medium</option><option value="LOW">Low</option></select></Field>
     <Field label="Deadline" name="deadline" type="date" defaultValue={project.deadline ?? ""}/>
     <Field label="Linked goal" name="goalId" defaultValue={project.goalId ?? ""}><select name="goalId" defaultValue={project.goalId ?? ""}><option value="">No linked goal</option>{goals.map(goal => <option key={goal.id} value={goal.id}>{goal.title}</option>)}</select></Field>
-    <ActionToast result={state} successMessage="Project changes saved."/>{state && !state.ok && <p className="text-xs text-[var(--danger)]" role="alert">{state.error}</p>}{state?.ok && <p className="text-xs text-[var(--success)]" role="status">Changes saved.</p>}
+    <ActionToast result={state} successMessage="Project changes saved."/>
+    {state && !state.ok && (
+      <div role="alert" className="flex items-start gap-2 rounded-lg border border-[var(--danger)]/30 bg-[color-mix(in_srgb,var(--danger),transparent_92%)] p-2.5 text-xs text-[var(--danger)]">
+        <AlertTriangle size={14} className="mt-0.5 shrink-0"/>
+        <span>{state.error}</span>
+      </div>
+    )}
+    {state?.ok && (
+      <div role="status" className="flex items-center gap-2 rounded-lg border border-[var(--success)]/30 bg-[color-mix(in_srgb,var(--success),transparent_92%)] px-2.5 py-1.5 text-xs text-[var(--success)]">
+        <Check size={14} className="shrink-0"/>
+        <span>Changes saved.</span>
+      </div>
+    )}
     <button type="submit" disabled={pending} className="min-h-9 rounded-lg bg-[var(--strawberry)] px-3 text-xs font-semibold text-[var(--ink)] disabled:cursor-wait disabled:opacity-60">{pending ? "Saving…" : "Save changes"}</button>
   </form>;
 }
@@ -156,22 +178,43 @@ function DeleteProjectButton({ projectId, title }: { projectId: string; title: s
     void form;
     return deleteProjectAction(projectId);
   }, null);
-  return <form action={action} className="ml-auto flex items-center gap-2">
+  return <form action={action} className="ml-auto inline-flex items-center">
     <ActionToast result={state} successMessage="Project removed."/>
-    {state && !state.ok && <span role="alert" className="max-w-36 text-[10px] text-[var(--danger)]">{state.error}</span>}
-    <ConfirmSubmitButton disabled={pending} title={`Remove “${title}”?`} description="Linked tasks, notes, time, and finance records will be kept without the project link." confirmLabel="Remove project" className="grid size-8 cursor-pointer place-items-center rounded-lg text-[var(--muted)] hover:bg-[color-mix(in_srgb,var(--danger),transparent_90%)] hover:text-[var(--danger)] disabled:opacity-50"><Trash size={13}/></ConfirmSubmitButton>
+    <ConfirmSubmitButton disabled={pending} title={`Remove “${title}”?`} description="Linked tasks, notes, time, and finance records will be kept without the project link." confirmLabel="Remove project" className="icon-button flex size-8 cursor-pointer items-center justify-center rounded-lg text-[var(--muted)] hover:bg-[color-mix(in_srgb,var(--danger),transparent_90%)] hover:text-[var(--danger)] disabled:opacity-50"><Trash size={13}/></ConfirmSubmitButton>
   </form>;
 }
 
 export function CreateProjectForm({ goals }: { goals: GoalChoice[] }) {
   const [state, action, pending] = useActionState(async (_previous: Result, form: FormData) => createProjectAction(form), null);
-  return <form action={action} className="space-y-3">
+  const formRef = useRef<HTMLFormElement | null>(null);
+
+  useEffect(() => {
+    if (state?.ok) {
+      const details = formRef.current?.closest("details");
+      if (details) details.open = false;
+      formRef.current?.reset();
+    }
+  }, [state]);
+
+  return <form ref={formRef} action={action} className="space-y-3">
     <Field label="Project name" name="title" required/>
     <Field label="Starting point" name="status"><select name="status" defaultValue="PLANNED"><option value="IDEA">Backlog idea</option><option value="PLANNED">Planned commitment</option><option value="ACTIVE">Active work</option></select></Field>
     <Field label="Priority" name="priority"><select name="priority" defaultValue="MEDIUM"><option value="MEDIUM">Medium</option><option value="HIGH">High</option><option value="LOW">Low</option></select></Field>
     <Field label="Deadline" name="deadline" type="date"/>
     <Field label="Linked goal" name="goalId"><select name="goalId" defaultValue=""><option value="">No linked goal</option>{goals.map(goal => <option key={goal.id} value={goal.id}>{goal.title}</option>)}</select></Field>
-    <ActionToast result={state} successMessage="Project created."/>{state && !state.ok && <p className="text-xs text-[var(--danger)]" role="alert">{state.error}</p>}{state?.ok && <p className="text-xs text-[var(--success)]" role="status">Project created.</p>}
+    <ActionToast result={state} successMessage="Project created."/>
+    {state && !state.ok && (
+      <div role="alert" className="flex items-start gap-2 rounded-lg border border-[var(--danger)]/30 bg-[color-mix(in_srgb,var(--danger),transparent_92%)] p-2.5 text-xs text-[var(--danger)]">
+        <AlertTriangle size={14} className="mt-0.5 shrink-0"/>
+        <span>{state.error}</span>
+      </div>
+    )}
+    {state?.ok && (
+      <div role="status" className="flex items-center gap-2 rounded-lg border border-[var(--success)]/30 bg-[color-mix(in_srgb,var(--success),transparent_92%)] px-2.5 py-1.5 text-xs text-[var(--success)]">
+        <Check size={14} className="shrink-0"/>
+        <span>Project created.</span>
+      </div>
+    )}
     <button type="submit" disabled={pending} className="min-h-11 rounded-xl bg-[var(--strawberry)] px-4 text-sm font-semibold text-[var(--ink)] disabled:cursor-wait disabled:opacity-60">{pending ? "Creating…" : "Create project"}</button>
   </form>;
 }

@@ -190,8 +190,16 @@ export async function deleteAccountAction(accountId: string) {
   if (!id.safeParse(accountId).success) return failure(new UserActionError("Invalid account."));
   try {
     const userId = await requireUserId(); const db = await getDatabase(); const accountObjectId = new ObjectId(accountId);
-    if (await db.collection<TransactionDocument>("transactions").findOne({ userId, accountId: accountObjectId, deletedAt: null }, { projection: { _id: 1 } })) return failure(new UserActionError("Delete or move this account’s transactions before removing the account."));
-    const result = await db.collection<AccountDocument>("accounts").updateOne({ _id: accountObjectId, userId, deletedAt: null }, { $set: { deletedAt: new Date(), updatedAt: new Date() } });
+    const now = new Date();
+    // Cascade soft-delete all transactions associated with this account
+    await db.collection<TransactionDocument>("transactions").updateMany(
+      { userId, accountId: accountObjectId, deletedAt: null },
+      { $set: { deletedAt: now, updatedAt: now } }
+    );
+    const result = await db.collection<AccountDocument>("accounts").updateOne(
+      { _id: accountObjectId, userId, deletedAt: null },
+      { $set: { deletedAt: now, updatedAt: now } }
+    );
     if (!result.matchedCount) return failure(new UserActionError("Account not found."));
     revalidatePath("/finance"); revalidatePath("/"); return { ok: true as const };
   } catch (error) { return failure(error); }

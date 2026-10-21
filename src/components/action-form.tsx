@@ -1,17 +1,52 @@
 "use client";
 
 import { useActionState } from "react";
-import { Children, isValidElement, useMemo, useState } from "react";
+import { Children, isValidElement, useEffect, useMemo, useRef, useState } from "react";
 import type { ReactElement, ReactNode } from "react";
-import { CalendarClock, ChevronDown, ChevronLeft, ChevronRight } from "@/components/ui/icons";
+import { AlertTriangle, CalendarClock, Check, ChevronDown, ChevronLeft, ChevronRight } from "@/components/ui/icons";
 import { ActionToast } from "@/components/action-toast";
 
-type Result = { ok: boolean; error?: string } | null;
-type FormAction = (formData: FormData) => Promise<{ ok: boolean; error?: string }>;
+type Result = { ok: boolean; error?: string; warning?: string } | null;
+type FormAction = (formData: FormData) => Promise<{ ok: boolean; error?: string; warning?: string }>;
 
-export function ActionForm({ action, children, submitLabel = "Save" }: { action: FormAction; children: ReactNode; submitLabel?: string }) {
+export function ActionForm({ action, children, submitLabel = "Save", onSuccess }: { action: FormAction; children: ReactNode; submitLabel?: string; onSuccess?: () => void }) {
   const [state, formAction, pending] = useActionState(async (_previous: Result, formData: FormData) => action(formData), null);
-  return <form action={formAction} className="space-y-3"><ActionToast result={state} successMessage="Saved."/>{children}{state?.error && <p role="alert" aria-live="assertive" className="text-sm text-[var(--danger)]">{state.error}</p>}{state?.ok && <p role="status" aria-live="polite" className="text-sm text-[var(--success)]">Saved.</p>}<button disabled={pending} className="min-h-11 rounded-xl bg-[var(--strawberry)] px-4 py-2.5 text-sm font-semibold text-[var(--ink)] transition hover:shadow-[0_0_24px_color-mix(in_srgb,var(--strawberry),transparent_65%)] disabled:cursor-wait disabled:opacity-60">{pending ? "Saving…" : submitLabel}</button></form>;
+  const formRef = useRef<HTMLFormElement | null>(null);
+
+  useEffect(() => {
+    if (state?.ok) {
+      onSuccess?.();
+      // Auto-close enclosing <details> popup
+      const details = formRef.current?.closest("details");
+      if (details) {
+        details.open = false;
+      }
+    }
+  }, [state, onSuccess]);
+
+  return <form ref={formRef} action={formAction} className="space-y-3">
+    <ActionToast result={state} successMessage="Saved."/>
+    {children}
+    {state?.error && (
+      <div role="alert" aria-live="assertive" className="flex items-start gap-2.5 rounded-lg border border-[var(--danger)]/30 bg-[color-mix(in_srgb,var(--danger),transparent_92%)] p-2.5 text-xs text-[var(--danger)]">
+        <AlertTriangle size={15} className="mt-0.5 shrink-0"/>
+        <span className="leading-5">{state.error}</span>
+      </div>
+    )}
+    {state?.warning && (
+      <div role="alert" aria-live="polite" className="flex items-start gap-2.5 rounded-lg border border-[var(--warning)]/30 bg-[color-mix(in_srgb,var(--warning),transparent_92%)] p-2.5 text-xs text-[var(--warning)]">
+        <AlertTriangle size={15} className="mt-0.5 shrink-0"/>
+        <span className="leading-5">{state.warning}</span>
+      </div>
+    )}
+    {state?.ok && (
+      <div role="status" aria-live="polite" className="flex items-center gap-2 rounded-lg border border-[var(--success)]/30 bg-[color-mix(in_srgb,var(--success),transparent_92%)] px-2.5 py-2 text-xs font-medium text-[var(--success)]">
+        <Check size={14} className="shrink-0"/>
+        <span>Saved successfully.</span>
+      </div>
+    )}
+    <button disabled={pending} className="min-h-11 rounded-xl bg-[var(--strawberry)] px-4 py-2.5 text-sm font-semibold text-[var(--ink)] transition hover:shadow-[0_0_24px_color-mix(in_srgb,var(--strawberry),transparent_65%)] disabled:cursor-wait disabled:opacity-60">{pending ? "Saving…" : submitLabel}</button>
+  </form>;
 }
 
 export function Field({ label, name, type = "text", required = false, defaultValue, autoComplete, minLength, disablePast = false, children }: { label: string; name: string; type?: string; required?: boolean; defaultValue?: string; autoComplete?: string; minLength?: number; disablePast?: boolean; children?: ReactNode }) {

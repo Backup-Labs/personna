@@ -7,7 +7,7 @@ vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 
 import { getDatabase } from "@/lib/db";
 import { requireUserId } from "@/server/authenticated-user";
-import { createTaskAction, deleteNoteAction, deleteTaskAction, deleteTransactionAction, updateNoteAction, updateTaskAction, updateTransactionAction } from "@/server/actions/core";
+import { createTaskAction, deleteAccountAction, deleteNoteAction, deleteTaskAction, deleteTransactionAction, updateNoteAction, updateTaskAction, updateTransactionAction } from "@/server/actions/core";
 
 describe("core server action failures", () => {
   beforeEach(() => vi.clearAllMocks());
@@ -134,5 +134,31 @@ describe("core server action failures", () => {
 
     await expect(deleteTransactionAction(transactionId.toHexString())).resolves.toMatchObject({ ok: true });
     expect(updateOne).toHaveBeenCalledWith({ _id: transactionId, userId, deletedAt: null }, { $set: expect.objectContaining({ deletedAt: expect.any(Date) }) });
+  });
+
+  it("cascades soft deletion to transactions when deleting an account", async () => {
+    const userId = new ObjectId("65a000000000000000000001");
+    const accountId = new ObjectId("65a000000000000000000003");
+    const updateOne = vi.fn().mockResolvedValue({ matchedCount: 1 });
+    const updateMany = vi.fn().mockResolvedValue({ matchedCount: 3 });
+    const db = {
+      collection: vi.fn((name: string) => {
+        if (name === "transactions") return { updateMany };
+        if (name === "accounts") return { updateOne };
+        return {};
+      }),
+    };
+    vi.mocked(getDatabase).mockResolvedValue(db as unknown as Db);
+    vi.mocked(requireUserId).mockResolvedValue(userId);
+
+    await expect(deleteAccountAction(accountId.toHexString())).resolves.toMatchObject({ ok: true });
+    expect(updateMany).toHaveBeenCalledWith(
+      { userId, accountId, deletedAt: null },
+      { $set: expect.objectContaining({ deletedAt: expect.any(Date), updatedAt: expect.any(Date) }) }
+    );
+    expect(updateOne).toHaveBeenCalledWith(
+      { _id: accountId, userId, deletedAt: null },
+      { $set: expect.objectContaining({ deletedAt: expect.any(Date), updatedAt: expect.any(Date) }) }
+    );
   });
 });

@@ -28,7 +28,10 @@ export default async function NotesPage({ searchParams }: { searchParams: Promis
           </div>
           <form action="/notes" className="mb-4 flex gap-2">
             <label className="sr-only" htmlFor="note-search">Search notes</label>
-            <div className="relative min-w-0 flex-1"><Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]"/><input id="note-search" name="q" defaultValue={search} placeholder="Search titles, notes, and tags" className="form-control mt-0 pl-9"/></div>
+            <div className="relative flex min-w-0 flex-1 items-center">
+              <Search size={15} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)]"/>
+              <input id="note-search" name="q" defaultValue={search} placeholder="Search titles, notes, and tags" className="form-control search-input !mt-0 !pl-10"/>
+            </div>
             <button className="min-h-11 rounded-xl border border-[var(--border-strong)] px-4 text-xs font-semibold">Search</button>
           </form>
           {notes.length ? (

@@ -11,7 +11,7 @@ export function TimeDeleteButton({ id, kind }: { id: string; kind: "block" | "en
   const label = kind === "block" ? "time block" : "time session";
   return <form action={action} className="inline-flex items-center gap-2">
     <ActionToast result={state} successMessage={`${kind === "block" ? "Time block" : "Time session"} deleted.`}/>
-    <ConfirmSubmitButton disabled={pending} title={`Delete this ${label}?`} description="This removes it from your schedule and time reports." confirmLabel={`Delete ${label}`} className="grid size-9 cursor-pointer place-items-center rounded-lg text-[var(--muted)] transition hover:bg-[color-mix(in_srgb,var(--danger),transparent_90%)] hover:text-[var(--danger)] disabled:opacity-50"><Trash size={13}/></ConfirmSubmitButton>
+    <ConfirmSubmitButton disabled={pending} title={`Delete this ${label}?`} description="This removes it from your schedule and time reports." confirmLabel={`Delete ${label}`} className="icon-button flex size-9 cursor-pointer items-center justify-center rounded-lg text-[var(--muted)] transition hover:bg-[color-mix(in_srgb,var(--danger),transparent_90%)] hover:text-[var(--danger)] disabled:opacity-50"><Trash size={13}/></ConfirmSubmitButton>
     {state && !state.ok && <span role="alert" className="text-[10px] text-[var(--danger)]">{state.error}</span>}
   </form>;
 }
